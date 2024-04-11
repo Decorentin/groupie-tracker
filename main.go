@@ -33,14 +33,6 @@ CREATE TABLE IF NOT EXISTS users (
 		log.Fatal(err)
 	}
 
-	// Insérer des données d'exemple dans la table 'users'
-	_, err = db.Exec(`
-INSERT INTO users (username, email, password) VALUES ("testUser", "test@example.com", "testPassword")
-`)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	http.HandleFunc("/", loginHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/home", serveFile("home.html"))

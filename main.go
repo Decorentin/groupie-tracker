@@ -13,6 +13,9 @@ import (
 var db *sql.DB
 
 func main() {
+
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	var err error
 	db, err = sql.Open("sqlite3", "./foo.db")
 	if err != nil {
@@ -34,12 +37,12 @@ CREATE TABLE IF NOT EXISTS users (
 	}
 
 	// Insérer des données d'exemple dans la table 'users'
-	_, err = db.Exec(`
-INSERT INTO users (username, email, password) VALUES ("testUser", "test@example.com", "testPassword")
-`)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// 	_, err = db.Exec(`
+	// INSERT INTO users (username, email, password) VALUES ("testUser", "test@example.com", "testPassword")
+	// `)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
 
 	http.HandleFunc("/", loginHandler)
 	http.HandleFunc("/login", loginHandler)

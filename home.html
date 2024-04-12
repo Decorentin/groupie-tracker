@@ -1,9 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-	<title>Page de jeu</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Plateforme de Jeux Musicaux</title>
+    <link rel="stylesheet" href="./static/styles.css">
 </head>
 <body>
-	<h1>Bienvenue sur la page de jeu !</h1>
+    <header>
+        <div class="logo">Logo</div>
+        <nav>
+            <ul>
+                <li><a href="#games">Nos Jeux</a></li>
+                <li><a href="/scoreboard">Classement</a></li>
+                <li><a href="/signin">Connexion / Inscription</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="intro">
+            <h1>Bienvenue sur notre Plateforme de Jeux Musicaux</h1>
+            <p>Rejoignez une communauté passionnée par la musique et testez vos connaissances à travers nos différents jeux.</p>
+        </section>
+        <section id="games">
+            <div class="game">
+                <img src="placeholder-game1.jpg" alt="Guess the Song">
+                <h2>Guess the Song</h2>
+                <p>Devinez le titre de la chanson à partir des paroles données.</p>
+                <a href="/guess-the-song">Jouer maintenant</a>
+            </div>
+            <div class="game">
+                <img src="placeholder-game2.jpg" alt="Blind Test">
+                <h2>Blind Test</h2>
+                <p>Identifiez la chanson jouée le plus rapidement possible.</p>
+                <a href="/blind-test">Jouer maintenant</a>
+            </div>
+            <div class="game">
+                <img src="placeholder-game3.jpg" alt="Petit Bac">
+                <h2>Petit Bac</h2>
+                <p>Un jeu de lettres sur le thème de la musique.</p>
+                <a href="/petit-bac">Jouer maintenant</a>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 Plateforme de Jeux Musicaux. Tous droits réservés.</p>
+    </footer>
 </body>
 </html>

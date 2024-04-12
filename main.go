@@ -13,6 +13,9 @@ import (
 var db *sql.DB
 
 func main() {
+
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	var err error
 	db, err = sql.Open("sqlite3", "./foo.db")
 	if err != nil {

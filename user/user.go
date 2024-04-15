@@ -15,7 +15,7 @@ type User struct {
 // RegisterUser permet d'inscrire un nouvel utilisateur
 func RegisterUser(db *sql.DB, user User) error {
 	var exists int
-	err := db.QueryRow("SELECT COUNT(*) FROM users WHERE username = ? OR email = ?", user.Username, user.Email).Scan(&exists)
+	err := db.QueryRow("SELECT COUNT(*) FROM USER WHERE username = ? OR email = ?", user.Username, user.Email).Scan(&exists)
 	if err != nil {
 		return err
 	}
@@ -23,7 +23,7 @@ func RegisterUser(db *sql.DB, user User) error {
 		return fmt.Errorf("username or email already exists")
 	}
 
-	_, err = db.Exec("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", user.Username, user.Email, user.Password)
+	_, err = db.Exec("INSERT INTO USER (username, email, password) VALUES (?, ?, ?)", user.Username, user.Email, user.Password)
 	return err
 }
 
@@ -33,10 +33,10 @@ func LoginUser(db *sql.DB, login, password string) (bool, error) {
 	var err error
 
 	// Rechercher l'utilisateur en utilisant le pseudo
-	err = db.QueryRow("SELECT password FROM users WHERE username = ?", login).Scan(&dbPassword)
+	err = db.QueryRow("SELECT password FROM USER WHERE username = ?", login).Scan(&dbPassword)
 	if err != nil {
 		// Si l'utilisateur n'est pas trouvé en utilisant le pseudo, rechercher en utilisant l'adresse e-mail
-		err = db.QueryRow("SELECT password FROM users WHERE email = ?", login).Scan(&dbPassword)
+		err = db.QueryRow("SELECT password FROM USER WHERE email = ?", login).Scan(&dbPassword)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				return false, fmt.Errorf("utilisateur non trouvé")
@@ -52,4 +52,3 @@ func LoginUser(db *sql.DB, login, password string) (bool, error) {
 
 	return true, nil
 }
-

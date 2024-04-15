@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS users (
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/home", serveFile("home.html"))
 	http.HandleFunc("/register", registerHandler)
+	http.HandleFunc("/signin", registerHandler)
 
 	http.ListenAndServe(":8080", nil)
 }

@@ -1,102 +1,122 @@
 package main
 
 import (
-	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
-	"test/user"
-
-	_ "github.com/mattn/go-sqlite3"
+	"net/url"
+	"strings"
+	"time"
 )
 
-var db *sql.DB
+const clientID = "dcb92b47b4fd450094f6e91c12bd1e4d"
+const clientSecret = "fa6ef02fc29e4def8b8bf60bdff4ea75"
+const tokenURL = "https://accounts.spotify.com/api/token"
+const playlistID = "1vCUdlD8Ic1KyEMctetRbU"
+const SpotifyAPIBase = "https://api.spotify.com/v1"
+
+func getAccessToken() (string, error) {
+	client := &http.Client{}
+	data := url.Values{}
+	data.Set("grant_type", "client_credentials")
+
+	req, err := http.NewRequest("POST", tokenURL, strings.NewReader(data.Encode()))
+	if err != nil {
+		return "", err
+	}
+
+	req.SetBasicAuth(clientID, clientSecret)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(body, &result); err != nil {
+		return "", err
+	}
+
+	token, ok := result["access_token"].(string)
+	if !ok {
+		return "", fmt.Errorf("access token not found in the response")
+	}
+
+	return token, nil
+}
+
+func getRandomTrackFromPlaylist(accessToken, playlistID string) (string, string, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", SpotifyAPIBase+"/playlists/"+playlistID+"/tracks", nil)
+	if err != nil {
+		return "", "", err
+	}
+
+	req.Header.Add("Authorization", "Bearer "+accessToken)
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", "", err
+	}
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(body, &result); err != nil {
+		return "", "", fmt.Errorf("error parsing JSON response: %s, response body: '%s'", err, string(body))
+	}
+
+	items, ok := result["items"].([]interface{})
+	if !ok || len(items) == 0 {
+		return "", "", fmt.Errorf("no tracks found in playlist")
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	randomIndex := rand.Intn(len(items))
+	track := items[randomIndex].(map[string]interface{})["track"].(map[string]interface{})
+
+	trackName, ok := track["name"].(string)
+	if !ok {
+		return "", "", fmt.Errorf("track name not found")
+	}
+
+	artists := track["artists"].([]interface{})
+	if len(artists) == 0 {
+		return "", "", fmt.Errorf("no artists found for track")
+	}
+
+	artistName, ok := artists[0].(map[string]interface{})["name"].(string)
+	if !ok {
+		return "", "", fmt.Errorf("artist name not found")
+	}
+
+	return trackName, artistName, nil
+}
 
 func main() {
-
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	var err error
-	db, err = sql.Open("sqlite3", "./foo.db")
+	accessToken, err := getAccessToken()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to get access token: %s", err)
 	}
-	defer db.Close()
 
-	// Créer la table 'users'
-	_, err = db.Exec(`
-CREATE TABLE IF NOT EXISTS USER (
-	id INTEGER PRIMARY KEY,
-	username TEXT UNIQUE NOT NULL,
-	email TEXT UNIQUE NOT NULL,
-	password TEXT NOT NULL
-)
-`)
+	trackName, artistName, err := getRandomTrackFromPlaylist(accessToken, playlistID)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error: %s", err)
 	}
 
-	http.HandleFunc("/", loginHandler)
-	http.HandleFunc("/login", loginHandler)
-	http.HandleFunc("/home", serveFile("home.html"))
-	http.HandleFunc("/register", registerHandler)
-
-	http.ListenAndServe(":8080", nil)
-}
-
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-		// Récupérer les données du formulaire
-		login := r.FormValue("username")
-		password := r.FormValue("password")
-
-		// Vérifier si les informations d'identification sont correctes
-		loggedIn, err := user.LoginUser(db, login, password)
-		if err != nil {
-			log.Println("Login failed:", err)
-			http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
-			return
-		}
-
-		if loggedIn {
-			// Rediriger l'utilisateur vers la page 'home'
-			http.Redirect(w, r, "/home", http.StatusSeeOther)
-		} else {
-			// Afficher un message d'erreur
-			fmt.Fprintln(w, "Nom d'utilisateur ou mot de passe incorrect")
-		}
-	} else {
-		serveFile("login.html")(w, r)
-	}
-}
-
-func registerHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		serveFile("register.html")(w, r)
-	} else if r.Method == "POST" {
-		// Récupérer les données du formulaire
-		username := r.FormValue("username")
-		email := r.FormValue("email")
-		password := r.FormValue("password")
-
-		// Enregistrer l'utilisateur dans la base de données
-		newUser := user.User{Username: username, Email: email, Password: password}
-		err := user.RegisterUser(db, newUser)
-		if err != nil {
-			log.Println("Failed to register user:", err)
-			http.Error(w, "Failed to register user: username or email already exists", http.StatusInternalServerError)
-			return
-		}
-
-		// Rediriger l'utilisateur vers la page de connexion
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	} else {
-		http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
-	}
-}
-
-func serveFile(filename string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, filename)
-	}
+	fmt.Println(accessToken)
+	fmt.Printf("Random Track: %s by %s\n", trackName, artistName)
 }

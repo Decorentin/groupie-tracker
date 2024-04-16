@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Song - Plateforme de Jeux Musicaux</title>
+    <link rel="stylesheet" href="./static/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Logo</div>
+        <nav>
+            <ul>
+                <li><a href="#games">Nos Jeux</a></li>
+                <li><a href="/scoreboard">Classement</a></li>
+                <li><a href="/signin">Connexion / Inscription</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="game-info">
+            <h1>Guess the Song</h1>
+            <form action="/guess-the-song" method="POST">
+                <label for="song-title">Titre de la Chanson:</label>
+                <input type="text" id="song-title" name="song" required>
+                <button type="submit" class="play-button">Rechercher</button>
+            </form>
+            <div id="lyrics-container">
+                <!-- Les paroles de la chanson seront affichées ici -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 Plateforme de Jeux Musicaux. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

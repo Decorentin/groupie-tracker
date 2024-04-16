@@ -25,8 +25,8 @@ func main() {
 
 	// Créer la table 'users'
 	_, err = db.Exec(`
-CREATE TABLE IF NOT EXISTS users (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS USER (
+	id INTEGER PRIMARY KEY,
 	username TEXT UNIQUE NOT NULL,
 	email TEXT UNIQUE NOT NULL,
 	password TEXT NOT NULL

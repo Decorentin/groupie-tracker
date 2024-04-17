@@ -2,272 +2,80 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
-	"net/url"
-	"strings"
-	"test/user"
-	"time"
+	guessthesong "test/guessTheSong"
+	"test/handlers"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const clientID = "dcb92b47b4fd450094f6e91c12bd1e4d"
-const clientSecret = "fa6ef02fc29e4def8b8bf60bdff4ea75"
-const tokenURL = "https://accounts.spotify.com/api/token"
-const playlistID = "1vCUdlD8Ic1KyEMctetRbU"
-const SpotifyAPIBase = "https://api.spotify.com/v1"
-
-func getAccessToken() (string, error) {
-	client := &http.Client{}
-	data := url.Values{}
-	data.Set("grant_type", "client_credentials")
-
-	req, err := http.NewRequest("POST", tokenURL, strings.NewReader(data.Encode()))
-	if err != nil {
-		return "", err
-	}
-
-	req.SetBasicAuth(clientID, clientSecret)
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	var result map[string]interface{}
-	if err := json.Unmarshal(body, &result); err != nil {
-		return "", err
-	}
-
-	token, ok := result["access_token"].(string)
-	if !ok {
-		return "", fmt.Errorf("access token not found in the response")
-	}
-
-	return token, nil
-}
-
-func getRandomTrackFromPlaylist(accessToken, playlistID string) (string, string, error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", SpotifyAPIBase+"/playlists/"+playlistID+"/tracks", nil)
-	if err != nil {
-		return "", "", err
-	}
-
-	req.Header.Add("Authorization", "Bearer "+accessToken)
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", "", err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", "", err
-	}
-
-	var result map[string]interface{}
-	if err := json.Unmarshal(body, &result); err != nil {
-		return "", "", fmt.Errorf("error parsing JSON response: %s, response body: '%s'", err, string(body))
-	}
-
-	items, ok := result["items"].([]interface{})
-	if !ok || len(items) == 0 {
-		return "", "", fmt.Errorf("no tracks found in playlist")
-	}
-
-	rand.Seed(time.Now().UnixNano())
-	randomIndex := rand.Intn(len(items))
-	track := items[randomIndex].(map[string]interface{})["track"].(map[string]interface{})
-
-	trackName, ok := track["name"].(string)
-	if !ok {
-		return "", "", fmt.Errorf("track name not found")
-	}
-
-	artists := track["artists"].([]interface{})
-	if len(artists) == 0 {
-		return "", "", fmt.Errorf("no artists found for track")
-	}
-
-	artistName, ok := artists[0].(map[string]interface{})["name"].(string)
-	if !ok {
-		return "", "", fmt.Errorf("artist name not found")
-	}
-
-	return trackName, artistName, nil
-}
-
-func getLyricsFromMusixmatch(trackName, artistName, apiKey string) (string, error) {
-	baseURL := "https://api.musixmatch.com/ws/1.1/"
-	endpoint := "matcher.lyrics.get"
-
-	url := fmt.Sprintf("%s%s?format=json&apikey=%s&q_track=%s&q_artist=%s", baseURL, endpoint, apiKey, url.QueryEscape(trackName), url.QueryEscape(artistName))
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("failed to get lyrics, status code: %d", resp.StatusCode)
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	var data map[string]interface{}
-	if err := json.Unmarshal(body, &data); err != nil {
-		return "", err
-	}
-
-	lyrics := data["message"].(map[string]interface{})["body"].(map[string]interface{})["lyrics"].(map[string]interface{})["lyrics_body"].(string)
-
-	return lyrics, nil
-}
+var db *sql.DB
 
 func main() {
+
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	var err error
-	db, err := sql.Open("sqlite3", "./foo.db")
+	db, err = sql.Open("sqlite3", "./foo.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
+	// Créer la table 'users'
 	_, err = db.Exec(`
 CREATE TABLE IF NOT EXISTS USER (
 	id INTEGER PRIMARY KEY,
 	username TEXT UNIQUE NOT NULL,
 	email TEXT UNIQUE NOT NULL,
 	password TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ROOMS (
+    id INTEGER PRIMARY KEY,
+    created_by INTEGER NOT NULL,
+    max_player INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    id_game INTEGER,
+    FOREIGN KEY (created_by) REFERENCES USER(id),
+    FOREIGN KEY (id_game) REFERENCES GAMES(id)
+);
+
+CREATE TABLE IF NOT EXISTS ROOM_USERS (
+    id_room INTEGER,
+    id_user INTEGER,
+    score INTEGER,
+    FOREIGN KEY (id_room) REFERENCES ROOMS(id),
+    FOREIGN KEY (id_user) REFERENCES USER(id),
+    PRIMARY KEY (id_room, id_user)
+);
+
+CREATE TABLE IF NOT EXISTS GAMES (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL
 )
+
+
 `)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		loginHandler(w, r, db)
-	})
-	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		loginHandler(w, r, db)
-	})
+	http.HandleFunc("/", handlers.LoginHandler(db))
+	http.HandleFunc("/login", handlers.LoginHandler(db))
+	http.HandleFunc("/register", handlers.RegisterHandler(db))
+
 	http.HandleFunc("/home", serveFile("home.html"))
 
-	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
-		registerHandler(w, r, db)
-	})
-
-	http.HandleFunc("/guess-the-song", func(w http.ResponseWriter, r *http.Request) {
-		guessTheSongHandler(w)
-	})
+	http.HandleFunc("/guess-the-song", guessthesong.GuessTheSongHandler)
 
 	http.ListenAndServe(":8080", nil)
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method == "POST" {
-		login := r.FormValue("username")
-		password := r.FormValue("password")
-
-		loggedIn, err := user.LoginUser(db, login, password)
-		if err != nil {
-			log.Println("Login failed:", err)
-			http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
-			return
-		}
-
-		if loggedIn {
-			http.Redirect(w, r, "/home", http.StatusSeeOther)
-		} else {
-			fmt.Fprintln(w, "Nom d'utilisateur ou mot de passe incorrect")
-		}
-	} else {
-		serveFile("login.html")(w, r)
-	}
-}
-
-func registerHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method == "GET" {
-		serveFile("register.html")(w, r)
-	} else if r.Method == "POST" {
-		username := r.FormValue("username")
-		email := r.FormValue("email")
-		password := r.FormValue("password")
-
-		newUser := user.User{Username: username, Email: email, Password: password}
-		err := user.RegisterUser(db, newUser)
-		if err != nil {
-			log.Println("Failed to register user:", err)
-			http.Error(w, "Failed to register user: username or email already exists", http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	} else {
-		http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
-	}
-}
-
+// serveFile retourne un gestionnaire qui sert un fichier spécifique.
 func serveFile(filename string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filename)
 	}
-}
-
-func guessTheSongHandler(w http.ResponseWriter) {
-	accessToken, err := getAccessToken()
-	if err != nil {
-		log.Println("Failed to get access token:", err)
-		http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
-		return
-	}
-
-	trackName, artistName, err := getRandomTrackFromPlaylist(accessToken, playlistID)
-	if err != nil {
-		log.Println("Failed to get random track:", err)
-		http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
-		return
-	}
-
-	lyrics, err := getLyricsFromMusixmatch(trackName, artistName, "fcc277ce6c9bd4d25476e2107fffec18")
-	if err != nil {
-		log.Println("Failed to get lyrics:", err)
-		http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
-		return
-	}
-
-	// Lire le contenu du fichier lyrics.html
-	htmlContent, err := ioutil.ReadFile("guess-the-song.html")
-	if err != nil {
-		log.Println("Failed to read lyrics.html:", err)
-		http.Error(w, "Erreur de lecture du fichier HTML", http.StatusInternalServerError)
-		return
-	}
-
-	// Remplacer les placeholders dans le contenu HTML
-	htmlContent = []byte(strings.ReplaceAll(string(htmlContent), "[Titre de la chanson]", trackName))
-	htmlContent = []byte(strings.ReplaceAll(string(htmlContent), "[Artiste]", artistName))
-	htmlContent = []byte(strings.ReplaceAll(string(htmlContent), "[Paroles]", lyrics))
-
-	// Envoyer le contenu HTML au navigateur
-	w.Header().Set("Content-Type", "text/html")
-	w.Write(htmlContent)
 }

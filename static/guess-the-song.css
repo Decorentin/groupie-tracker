@@ -1,0 +1,22 @@
+.container {
+    margin: 50px auto;
+    width: 80%;
+}
+
+#lyricsTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#lyricsTable td {
+    border: 1px solid #443e3e;
+    padding: 8px;
+    text-align: center; /* Centrer le contenu dans les cellules */
+}
+
+#songLyrics {
+    white-space: pre-wrap;
+    font-family: Arial, sans-serif;
+    margin: auto; /* Centrer le texte dans la cellule */
+    text-align: center; /* Centrer le texte dans la cellule */
+}

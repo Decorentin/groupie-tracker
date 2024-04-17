@@ -110,7 +110,7 @@ func getLyricsFromMusixmatch(trackName, artistName, apiKey string) (string, erro
 	baseURL := "https://api.musixmatch.com/ws/1.1/"
 	endpoint := "matcher.lyrics.get"
 
-	// Construire l'URL de requête avec les paramètres nécessaires
+	// Build the query URL with the necessary parameters
 	url := fmt.Sprintf("%s%s?format=json&apikey=%s&q_track=%s&q_artist=%s", baseURL, endpoint, apiKey, url.QueryEscape(trackName), url.QueryEscape(artistName))
 
 	resp, err := http.Get(url)
@@ -149,11 +149,10 @@ func main() {
 		log.Fatalf("Error: %s", err)
 	}
 
-	// Obtenir les paroles de la chanson à partir de l'API Musixmatch
+	// Get song lyrics from the Musixmatch API
 	lyrics, err := getLyricsFromMusixmatch(trackName, artistName, "fcc277ce6c9bd4d25476e2107fffec18")
 	if err != nil {
 		log.Printf("Failed to get lyrics: %s", err)
-		// Gérer l'erreur ici
 	} else {
 		fmt.Printf("Lyrics for %s by %s:\n%s\n", trackName, artistName, lyrics)
 	}

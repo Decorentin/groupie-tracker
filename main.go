@@ -106,6 +106,38 @@ func getRandomTrackFromPlaylist(accessToken, playlistID string) (string, string,
 	return trackName, artistName, nil
 }
 
+func getLyricsFromMusixmatch(trackName, artistName, apiKey string) (string, error) {
+	baseURL := "https://api.musixmatch.com/ws/1.1/"
+	endpoint := "matcher.lyrics.get"
+
+	// Construire l'URL de requête avec les paramètres nécessaires
+	url := fmt.Sprintf("%s%s?format=json&apikey=%s&q_track=%s&q_artist=%s", baseURL, endpoint, apiKey, url.QueryEscape(trackName), url.QueryEscape(artistName))
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to get lyrics, status code: %d", resp.StatusCode)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var data map[string]interface{}
+	if err := json.Unmarshal(body, &data); err != nil {
+		return "", err
+	}
+
+	lyrics := data["message"].(map[string]interface{})["body"].(map[string]interface{})["lyrics"].(map[string]interface{})["lyrics_body"].(string)
+
+	return lyrics, nil
+}
+
 func main() {
 	accessToken, err := getAccessToken()
 	if err != nil {
@@ -117,6 +149,12 @@ func main() {
 		log.Fatalf("Error: %s", err)
 	}
 
-	fmt.Println(accessToken)
-	fmt.Printf("Random Track: %s by %s\n", trackName, artistName)
+	// Obtenir les paroles de la chanson à partir de l'API Musixmatch
+	lyrics, err := getLyricsFromMusixmatch(trackName, artistName, "fcc277ce6c9bd4d25476e2107fffec18")
+	if err != nil {
+		log.Printf("Failed to get lyrics: %s", err)
+		// Gérer l'erreur ici
+	} else {
+		fmt.Printf("Lyrics for %s by %s:\n%s\n", trackName, artistName, lyrics)
+	}
 }

@@ -27,7 +27,7 @@ func main() {
 	_, err = db.Exec(`
 CREATE TABLE IF NOT EXISTS USER (
 	id INTEGER PRIMARY KEY,
-	username TEXT UNIQUE NOT NULL,
+	pseudo TEXT UNIQUE NOT NULL,
 	email TEXT UNIQUE NOT NULL,
 	password TEXT NOT NULL
 );

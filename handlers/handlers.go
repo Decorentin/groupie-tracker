@@ -19,7 +19,7 @@ func serveFile(filename string) http.HandlerFunc {
 func LoginHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "POST" {
-			login := r.FormValue("username")
+			login := r.FormValue("pseudo")
 			password := r.FormValue("password")
 
 			loggedIn, err := user.LoginUser(db, login, password)
@@ -46,15 +46,15 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 		if r.Method == "GET" {
 			serveFile("register.html")(w, r)
 		} else if r.Method == "POST" {
-			username := r.FormValue("username")
+			pseudo := r.FormValue("pseudo")
 			email := r.FormValue("email")
 			password := r.FormValue("password")
 
-			newUser := user.User{Username: username, Email: email, Password: password}
+			newUser := user.User{Pseudo: pseudo, Email: email, Password: password}
 			err := user.RegisterUser(db, newUser)
 			if err != nil {
 				log.Println("Failed to register user:", err)
-				http.Error(w, "Failed to register user: username or email already exists", http.StatusInternalServerError)
+				http.Error(w, "Failed to register user: pseudo or email already exists", http.StatusInternalServerError)
 				return
 			}
 

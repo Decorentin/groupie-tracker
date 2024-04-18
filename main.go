@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	blindtest "test/blindTest"
 	guessthesong "test/guessTheSong"
 	"test/handlers"
 
@@ -69,6 +70,7 @@ CREATE TABLE IF NOT EXISTS GAMES (
 	http.HandleFunc("/home", serveFile("home.html"))
 
 	http.HandleFunc("/guess-the-song", guessthesong.GuessTheSongHandler)
+	http.HandleFunc("/blind-test", blindtest.BlindTestHandler)
 
 	http.ListenAndServe(":8080", nil)
 }

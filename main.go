@@ -4,27 +4,23 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+
+	// Our packages
 	blindtest "test/blindTest"
 	guessthesong "test/guessTheSong"
 	"test/handlers"
 
+	//SQLite driver
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var db *sql.DB
-
-func main() {
-
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	var err error
-	db, err = sql.Open("sqlite3", "./foo.db")
+func initDB() *sql.DB {
+	db, err := sql.Open("sqlite3", "./foo.db")
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
-	// Créer la table 'users'
+	// Create tables USER, ROOMS, ROOM_USERS, GAMES
 	_, err = db.Exec(`
 CREATE TABLE IF NOT EXISTS USER (
 	id INTEGER PRIMARY KEY,
@@ -32,36 +28,41 @@ CREATE TABLE IF NOT EXISTS USER (
 	email TEXT UNIQUE NOT NULL,
 	password TEXT NOT NULL
 );
-
 CREATE TABLE IF NOT EXISTS ROOMS (
-    id INTEGER PRIMARY KEY,
-    created_by INTEGER NOT NULL,
-    max_player INTEGER NOT NULL,
-    name TEXT NOT NULL,
-    id_game INTEGER,
-    FOREIGN KEY (created_by) REFERENCES USER(id),
-    FOREIGN KEY (id_game) REFERENCES GAMES(id)
+	id INTEGER PRIMARY KEY,
+	created_by INTEGER NOT NULL,
+	max_player INTEGER NOT NULL,
+	name TEXT NOT NULL,
+	id_game INTEGER,
+	FOREIGN KEY (created_by) REFERENCES USER(id),
+	FOREIGN KEY (id_game) REFERENCES GAMES(id)
 );
-
 CREATE TABLE IF NOT EXISTS ROOM_USERS (
-    id_room INTEGER,
-    id_user INTEGER,
-    score INTEGER,
-    FOREIGN KEY (id_room) REFERENCES ROOMS(id),
-    FOREIGN KEY (id_user) REFERENCES USER(id),
-    PRIMARY KEY (id_room, id_user)
+	id_room INTEGER,
+	id_user INTEGER,
+	score INTEGER,
+	FOREIGN KEY (id_room) REFERENCES ROOMS(id),
+	FOREIGN KEY (id_user) REFERENCES USER(id),
+	PRIMARY KEY (id_room, id_user)
 );
-
 CREATE TABLE IF NOT EXISTS GAMES (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL
-)
-
-
+	id INTEGER PRIMARY KEY,
+	name TEXT NOT NULL
+);
 `)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	return db
+}
+
+func main() {
+
+	db := initDB()
+	defer db.Close()
+
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	http.HandleFunc("/", handlers.LoginHandler(db))
 	http.HandleFunc("/login", handlers.LoginHandler(db))

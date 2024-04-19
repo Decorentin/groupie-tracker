@@ -18,6 +18,16 @@
                 </td>
             </tr>
         </table>
+
+        <form id="songForm" action="/check-answer" method="post">
+            <input type="text" id="userAnswer" name="userAnswer" placeholder="Entrez le titre de la chanson">
+            <button type="submit">Soumettre</button>
+        </form>
+
+        <div id="resultMessage"></div>
     </div>
+
+    <script src="/static/result.js"></script> 
+
 </body>
 </html>

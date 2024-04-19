@@ -10,6 +10,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/gosimple/slug"
 )
 
 const clientID = "dcb92b47b4fd450094f6e91c12bd1e4d"
@@ -17,6 +19,8 @@ const clientSecret = "fa6ef02fc29e4def8b8bf60bdff4ea75"
 const tokenURL = "https://accounts.spotify.com/api/token"
 const playlistID = "1vCUdlD8Ic1KyEMctetRbU"
 const SpotifyAPIBase = "https://api.spotify.com/v1"
+
+var selectedSongTitle string
 
 func getAccessToken() (string, error) {
 	client := &http.Client{}
@@ -137,6 +141,34 @@ func getLyricsFromMusixmatch(trackName, artistName, apiKey string) (string, erro
 	return lyrics, nil
 }
 
+func CheckAnswerHandler(w http.ResponseWriter, r *http.Request) {
+	// Vérifier si la méthode HTTP est POST
+	if r.Method != http.MethodPost {
+		http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Récupérer la réponse de l'utilisateur depuis le formulaire
+	userAnswer := r.FormValue("userAnswer")
+
+	// Convertir la réponse de l'utilisateur et le titre de la chanson sélectionnée aléatoirement en minuscules sans accents
+	userAnswerLower := removeAccents(strings.ToLower(userAnswer))
+	selectedSongTitleLower := removeAccents(strings.ToLower(selectedSongTitle))
+
+	// Vérifier si la réponse de l'utilisateur correspond au titre de la chanson sélectionné aléatoirement
+	if userAnswerLower == selectedSongTitleLower {
+		// Envoyer une réponse de succès si la réponse est correcte
+		fmt.Fprintln(w, "Bravo, vous avez deviné la bonne chanson !")
+	} else {
+		// Envoyer une réponse d'échec si la réponse est incorrecte
+		fmt.Fprintln(w, "Désolé, votre réponse est incorrecte.")
+	}
+}
+
+func removeAccents(s string) string {
+	return slug.Make(s)
+}
+
 func GuessTheSongHandler(w http.ResponseWriter, r *http.Request) {
 	accessToken, err := getAccessToken()
 	if err != nil {
@@ -151,6 +183,9 @@ func GuessTheSongHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
 		return
 	}
+
+	// Stocker le titre de la chanson sélectionnée aléatoirement
+	selectedSongTitle = trackName
 
 	lyrics, err := getLyricsFromMusixmatch(trackName, artistName, "fcc277ce6c9bd4d25476e2107fffec18")
 	if err != nil {

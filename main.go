@@ -72,6 +72,7 @@ func main() {
 
 	http.HandleFunc("/guess-the-song", guessthesong.GuessTheSongHandler)
 	http.HandleFunc("/blind-test", blindtest.BlindTestHandler)
+	http.HandleFunc("/check-answer", guessthesong.CheckAnswerHandler)
 
 	http.ListenAndServe(":8080", nil)
 }

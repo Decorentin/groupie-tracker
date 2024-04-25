@@ -7,7 +7,9 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"strings"
+	"text/template"
 	"time"
 )
 
@@ -18,6 +20,15 @@ const playlistID = "1vCUdlD8Ic1KyEMctetRbU"
 const SpotifyAPIBase = "https://api.spotify.com/v1"
 
 var httpClient = &http.Client{}
+
+type BlindTestStruct struct {
+	TrackID    string
+	TrackName  string
+	ArtistName string
+	Token      string
+}
+
+var bt *BlindTestStruct
 
 func getAccessToken() (string, error) {
 	data := url.Values{}
@@ -112,43 +123,37 @@ func getRandomTrackFromPlaylist(accessToken, playlistID string) (string, string,
 }
 
 func BlindTestHandler(w http.ResponseWriter, r *http.Request) {
-	// Obtention du token d'accès
+	// Obtention du token et de la piste comme précédemment
 	accessToken, err := getAccessToken()
 	if err != nil {
 		http.Error(w, "Failed to get access token", http.StatusInternalServerError)
 		return
 	}
-
-	// Obtention d'une piste aléatoire de la playlist
 	trackName, artistName, trackURI, err := getRandomTrackFromPlaylist(accessToken, playlistID)
 	if err != nil {
 		http.Error(w, "Failed to get random track", http.StatusInternalServerError)
-		fmt.Println(trackName, artistName)
 		return
 	}
-
-	// Extraire l'ID de la piste depuis l'URI Spotify
 	splitURI := strings.Split(trackURI, ":")
-	if len(splitURI) < 3 {
-		http.Error(w, "Invalid Spotify URI", http.StatusInternalServerError)
-		return
-	}
 	trackID := splitURI[2]
 
-	// Génération du contenu HTML
-	htmlContent := fmt.Sprintf(`<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music player</title>
-    <link rel="stylesheet" href="./static/styles.css">
-</head>
-<body>
-    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/%s?utm_source=generator" width="100%%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-</body>
-</html>`, trackID)
+	bt = &BlindTestStruct{
+		TrackID:    trackID,
+		TrackName:  trackName,
+		ArtistName: artistName,
+		Token:      accessToken,
+	}
 
+	// Charger le template
+	tmplPath := filepath.Join("blind-test.html")
+	tmpl, err := template.ParseFiles(tmplPath)
+	if err != nil {
+		http.Error(w, "Error loading template", http.StatusInternalServerError)
+		return
+	}
+
+	// Générer la réponse HTML avec le template
 	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(htmlContent))
+	tmpl.Execute(w, bt)
 }
+

@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"net/http"
@@ -22,7 +24,10 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			login := r.FormValue("pseudo")
 			password := r.FormValue("password")
 
-			loggedIn, err := user.LoginUser(db, login, password)
+			// Hachage du mot de passe avec SHA-256 avant de le comparer
+			hashedPassword := hashPassword(password)
+
+			loggedIn, err := user.LoginUser(db, login, hashedPassword)
 			if err != nil {
 				log.Println("Login failed:", err)
 				http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
@@ -56,7 +61,10 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 				return
 			}
 
-			newUser := user.User{Pseudo: pseudo, Email: email, Password: password}
+			// Hachage du mot de passe avec SHA-256 avant de l'enregistrer
+			hashedPassword := hashPassword(password)
+
+			newUser := user.User{Pseudo: pseudo, Email: email, Password: hashedPassword}
 			err := user.RegisterUser(db, newUser)
 			if err != nil {
 				log.Println("Failed to register user:", err)
@@ -69,4 +77,12 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 			http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
 		}
 	}
+}
+
+// Fonction pour hasher un mot de passe avec l'algorithme SHA-256
+func hashPassword(password string) string {
+	hash := sha256.New()
+	hash.Write([]byte(password))
+	hashedPassword := hex.EncodeToString(hash.Sum(nil))
+	return hashedPassword
 }

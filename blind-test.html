@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="./static/blind-test.css">
 </head>
 <body>
-    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1X6bIG5yMcjmmAk1jDuxcz?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <div class="player-wrapper">
+        <iframe id="spotifyPlayer" src="https://open.spotify.com/embed/track/{{.TrackID}}?utm_source=generator" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <form action="/submit" method="post">
+        </form>
+        <div class="cover" id="cover"></div>
+        <div class="cover2" id="cover2"></div>
+    </div>
 </body>
 </html>

@@ -6,7 +6,10 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"strings"
+	"text/template"
 	"time"
 )
 
@@ -18,14 +21,26 @@ const SpotifyAPIBase = "https://api.spotify.com/v1"
 
 var httpClient = &http.Client{}
 
+type BlindTestStruct struct {
+	TrackID    string
+	TrackName  string
+	ArtistName string
+	Token      string
+}
+
+var bt *BlindTestStruct
+
 func getAccessToken() (string, error) {
-	data := "grant_type=client_credentials"
-	req, err := http.NewRequest("POST", tokenURL, strings.NewReader(data))
+	data := url.Values{}
+	data.Set("grant_type", "client_credentials")
+
+	req, err := http.NewRequest("POST", tokenURL, strings.NewReader(data.Encode()))
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %v", err)
 	}
+
 	req.SetBasicAuth(clientID, clientSecret)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
@@ -51,14 +66,15 @@ func getAccessToken() (string, error) {
 	return token, nil
 }
 
-func getRandomTrackFromPlaylist(accessToken string) (string, string, string, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/playlists/%s/tracks", SpotifyAPIBase, playlistID), nil)
+func getRandomTrackFromPlaylist(accessToken, playlistID string) (string, string, string, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", SpotifyAPIBase+"/playlists/"+playlistID+"/tracks", nil)
 	if err != nil {
 		return "", "", "", err
 	}
-	req.Header.Set("Authorization", "Bearer "+accessToken)
 
-	resp, err := httpClient.Do(req)
+	req.Header.Add("Authorization", "Bearer "+accessToken)
+	resp, err := client.Do(req)
 	if err != nil {
 		return "", "", "", err
 	}
@@ -71,7 +87,7 @@ func getRandomTrackFromPlaylist(accessToken string) (string, string, string, err
 
 	var result map[string]interface{}
 	if err := json.Unmarshal(body, &result); err != nil {
-		return "", "", "", fmt.Errorf("error parsing JSON response: %v", err)
+		return "", "", "", fmt.Errorf("error parsing JSON response: %s, response body: '%s'", err, string(body))
 	}
 
 	items, ok := result["items"].([]interface{})
@@ -107,126 +123,37 @@ func getRandomTrackFromPlaylist(accessToken string) (string, string, string, err
 }
 
 func BlindTestHandler(w http.ResponseWriter, r *http.Request) {
-	// Vérifier si la méthode HTTP est POST (traitement du formulaire)
-	if r.Method == http.MethodPost {
-		// Récupérer les réponses soumises par l'utilisateur depuis le formulaire
-		submittedTrackName := r.FormValue("songName")
-		submittedArtistName := r.FormValue("artistName")
-		correctTrackName := r.FormValue("trackName")
-		correctArtistName := r.FormValue("artistNameCorrect")
-
-		// Vérifier si les réponses soumises sont correctes
-		isCorrect := submittedTrackName == correctTrackName && submittedArtistName == correctArtistName
-
-		// Construire le message de résultat
-		var resultMessage string
-		if isCorrect {
-			resultMessage = "Bonne réponse!"
-		} else {
-			resultMessage = fmt.Sprintf("Mauvaise réponse. La chanson était: %s par %s", correctTrackName, correctArtistName)
-		}
-
-		// Afficher le résultat dans la même page
-		htmlContent := fmt.Sprintf(`<!DOCTYPE html>
-        <html lang="fr">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Résultat Blind Test Spotify</title>
-            <link rel="stylesheet" href="/static/blind-test.css">
-        </head>
-        <body>
-            <h1>Résultat du Blind Test</h1>
-            <p>%s</p>
-            <a href="/blind-test">Retour au jeu</a>
-        </body>
-        </html>`, resultMessage)
-
-		// Envoyer la réponse HTML avec le résultat
-		w.Header().Set("Content-Type", "text/html")
-		w.Write([]byte(htmlContent))
-
-		return
-	}
-
-	// Si ce n'est pas une requête POST, afficher le formulaire normal
+	// Obtention du token et de la piste comme précédemment
 	accessToken, err := getAccessToken()
 	if err != nil {
 		http.Error(w, "Failed to get access token", http.StatusInternalServerError)
 		return
 	}
-
-	trackName, artistName, trackURI, err := getRandomTrackFromPlaylist(accessToken)
+	trackName, artistName, trackURI, err := getRandomTrackFromPlaylist(accessToken, playlistID)
 	if err != nil {
 		http.Error(w, "Failed to get random track", http.StatusInternalServerError)
 		return
 	}
-
 	splitURI := strings.Split(trackURI, ":")
-	if len(splitURI) < 3 {
-		http.Error(w, "Invalid Spotify URI", http.StatusInternalServerError)
-		return
-	}
 	trackID := splitURI[2]
 
-	htmlContent := fmt.Sprintf(`<!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Blind Test Spotify</title>
-        <link rel="stylesheet" href="/static/blind-test.css">
-    </head>
-    <body>
-        <h1>Blind Test Spotify</h1>
-        <iframe id="spotifyPlayer" src="https://open.spotify.com/embed/track/%s" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-        <form method="post">
-            <label for="songName">Nom de la chanson :</label>
-            <input type="text" id="songName" name="songName" required><br>
-            <label for="artistName">Nom de l'artiste :</label>
-            <input type="text" id="artistName" name="artistName" required><br>
-            <input type="hidden" name="trackName" value="%s">
-            <input type="hidden" name="artistNameCorrect" value="%s">
-            <input type="submit" value="Valider">
-        </form>
-    </body>
-    </html>`, trackID, trackName, artistName)
+	bt = &BlindTestStruct{
+		TrackID:    trackID,
+		TrackName:  trackName,
+		ArtistName: artistName,
+		Token:      accessToken,
+	}
 
-	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(htmlContent))
-}
-
-func CheckAnswerHandler(w http.ResponseWriter, r *http.Request) {
-	// Vérifier si la méthode HTTP est POST
-	if r.Method != http.MethodPost {
-		http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+	// Charger le template
+	tmplPath := filepath.Join("blind-test.html")
+	tmpl, err := template.ParseFiles(tmplPath)
+	if err != nil {
+		http.Error(w, "Error loading template", http.StatusInternalServerError)
 		return
 	}
 
-	// Récupérer la réponse de l'utilisateur depuis le formulaire
-	userAnswer := r.FormValue("userAnswer")
-
-	// Liste des réponses correctes possibles
-	correctAnswers := []string{"Je danse le Mia", "Lettre ", "Fenêtre Sur Rue", "Dans ma rue", "High for the Chronic", "Samuraï", "Samurai", "Ma Benz", "ma benz", "Petit frère", "Qui est l'exemple", "shurikn", "shurik'n", "Shurik'n", "Supreme NTM", "supreme NTM", "NTM", "hugo tsr", "Hugo TSR"}
-
-	// Convertir la réponse de l'utilisateur et les réponses correctes en minuscules pour la comparaison
-	userAnswerLower := strings.ToLower(userAnswer)
-
-	// Vérifier si la réponse de l'utilisateur correspond à l'une des réponses correctes
-	var correct bool
-	for _, correctAnswer := range correctAnswers {
-		if userAnswerLower == strings.ToLower(correctAnswer) {
-			correct = true
-			break
-		}
-	}
-
-	// Envoyer une réponse en fonction de la vérification
-	if correct {
-		// Envoyer une réponse de succès si la réponse est correcte
-		fmt.Fprintln(w, "Bravo, vous avez deviné la bonne chanson !")
-	} else {
-		// Envoyer une réponse d'échec si la réponse est incorrecte
-		fmt.Fprintln(w, "Désolé, votre réponse est incorrecte.")
-	}
+	// Générer la réponse HTML avec le template
+	w.Header().Set("Content-Type", "text/html")
+	tmpl.Execute(w, bt)
 }
+

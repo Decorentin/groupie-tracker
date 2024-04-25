@@ -1,21 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Inscription</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="/static/login-register.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <h1>Inscription</h1>
+
+  <div class="wrapper">
     <form action="/register" method="post">
-        <label for="pseudo">Nom d'utilisateur :</label><br>
-        <input type="text" id="pseudo" name="pseudo"><br>
-        <label for="email">Email :</label><br>
-        <input type="email" id="email" name="email"><br>
-        <label for="password">Mot de passe :</label><br>
-        <input type="password" id="password" name="password"><br>
-        <label for="confirm_password">Confirmer le mot de passe :</label><br>
-        <input type="password" id="confirm_password" name="confirm_password"><br>
-        <input type="submit" value="S'inscrire">
+		<h1 class="bounce">Register</h1>
+      <div class="input-box">
+        <input type="text" id="pseudo" name="pseudo">
+        <i class='bx bxs-user'></i>
+      </div>
+      <div class="input-box">
+        <input type="text" id="email" name="email">
+        <i class='bx bx-envelope'></i>
+      </div>
+      <div class="input-box">
+        <input type="password" id="password" name="password">
+        <i class='bx bxs-lock-alt' ></i>
+      </div>
+      <!-- <div class="remember-forgot">
+        <label><input type="checkbox">Remember Me</label>
+        <a href="#">Forgot Password</a>
+      </div> -->
+      <button type="submit" class="btn">Login</button>
+      </div>
     </form>
-    <p>Déjà un compte ? <a href="/login">Connectez-vous ici</a>.</p>
+  </div>
 </body>
 </html>

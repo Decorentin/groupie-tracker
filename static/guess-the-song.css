@@ -20,3 +20,9 @@
     margin: auto; /* Centrer le texte dans la cellule */
     text-align: center; /* Centrer le texte dans la cellule */
 }
+
+#quitButton {
+    position: absolute;
+    top: 20px; /* Ajustez la distance du haut selon vos besoins */
+    right: 20px; /* Ajustez la distance de la droite selon vos besoins */
+}

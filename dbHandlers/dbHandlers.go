@@ -1,4 +1,4 @@
-package handlers
+package dbHandlers
 
 import (
 	"crypto/sha256"

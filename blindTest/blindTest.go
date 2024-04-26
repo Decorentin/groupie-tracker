@@ -156,4 +156,3 @@ func BlindTestHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	tmpl.Execute(w, bt)
 }
-

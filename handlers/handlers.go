@@ -6,8 +6,10 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"test/user"
+	"unicode"
 )
 
 // serveFile retourne un gestionnaire qui sert un fichier spécifique.
@@ -61,6 +63,13 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 				return
 			}
 
+			// Vérification de la complexité du mot de passe
+			passwordEntropy := passwordEntropy(password)
+			if passwordEntropy < 80 { // Changement ici pour 80 bits
+				http.Error(w, "Le mot de passe doit avoir une entropie d'au moins 80", http.StatusBadRequest)
+				return
+			}
+
 			// Hachage du mot de passe avec SHA-256 avant de l'enregistrer
 			hashedPassword := hashPassword(password)
 
@@ -85,4 +94,25 @@ func hashPassword(password string) string {
 	hash.Write([]byte(password))
 	hashedPassword := hex.EncodeToString(hash.Sum(nil))
 	return hashedPassword
+}
+
+// Fonction pour calculer l'entropie du mot de passe
+func passwordEntropy(password string) int {
+	var (
+		entropy float64
+		charset float64
+	)
+
+	for _, char := range password {
+		if unicode.IsLetter(char) {
+			charset += 52 // 26 lowercase + 26 uppercase
+		} else if unicode.IsDigit(char) {
+			charset += 10 // 10 digits
+		} else {
+			charset += 33 // 33 special characters
+		}
+	}
+
+	entropy = float64(len(password)) * (math.Log2(charset))
+	return int(entropy)
 }

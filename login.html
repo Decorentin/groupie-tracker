@@ -1,17 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Connexion</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/static/login-register.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-	<h1>Connexion</h1>
-	<form action="/login" method="post">
-		<label for="pseudo">Nom d'utilisateur :</label><br>
-		<input type="text" id="pseudo" name="pseudo"><br>
-		<label for="password">Mot de passe :</label><br>
-		<input type="password" id="password" name="password"><br>
-		<input type="submit" value="Se connecter">
-	</form>
-	<p>Vous n'avez pas de compte ? <a href="/register">Créer un compte</a></p>
+
+  <div class="wrapper">
+    <form action="/login" method="post">
+		<h1 class="bounce">Login</h1>
+      <div class="input-box">
+        <input type="text" id="pseudo" name="pseudo">
+        <i class='bx bxs-user'></i>
+      </div>
+      <div class="input-box">
+        <input type="password" id="password" name="password">
+        <i class='bx bxs-lock-alt' ></i>
+      </div>
+      <!-- <div class="remember-forgot">
+        <label><input type="checkbox">Remember Me</label>
+        <a href="#">Forgot Password</a>
+      </div> -->
+      <button type="submit" class="btn">Login</button>
+      <div class="register-link">
+        <p>Dont have an account? <a href="/register">Register</a></p>
+      </div>
+    </form>
+  </div>
 </body>
 </html>

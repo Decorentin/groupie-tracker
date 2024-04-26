@@ -49,6 +49,12 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 			pseudo := r.FormValue("pseudo")
 			email := r.FormValue("email")
 			password := r.FormValue("password")
+			confirmPassword := r.FormValue("confirm_password")
+
+			if password != confirmPassword {
+				http.Error(w, "Les mots de passe ne correspondent pas", http.StatusBadRequest)
+				return
+			}
 
 			newUser := user.User{Pseudo: pseudo, Email: email, Password: password}
 			err := user.RegisterUser(db, newUser)

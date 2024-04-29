@@ -33,7 +33,7 @@ document.getElementById('songForm').addEventListener('submit', function(event) {
     xhr.onload = function() {
         // Afficher le résultat de la vérification dans la balise div
         document.getElementById('resultMessage').innerText = this.responseText;
-
+    
         // Si la réponse est correcte, incrémenter le score et afficher le nouveau score
         if (this.responseText.trim() === "Bravo, vous avez deviné la bonne chanson !") {
             score++; // Incrémenter le score
@@ -41,12 +41,19 @@ document.getElementById('songForm').addEventListener('submit', function(event) {
             // Stocker le score dans le stockage local
             localStorage.setItem('score', score);
         }
-
-        // Actualiser la page après 1 seconde
-        setTimeout(function() {
-            window.location.reload();
-        }, 1000);
-    };
+    
+        // Vérifier si le score atteint 5
+        if (score === 5) {
+            // Construire l'URL de redirection vers la page de victoire avec le score
+            var winPageURL = "/win?score=" + score;
+            window.location.href = winPageURL; // Rediriger l'utilisateur vers la page de victoire
+        } else {
+            // Si le score n'est pas encore de 5, actualiser la page après 1 seconde
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+    };    
     xhr.send('userAnswer=' + encodeURIComponent(userAnswer));
 });
 

@@ -10,22 +10,13 @@
     <div class="player-wrapper">
         <h2>Blind Test</h2>
         <h3>Devinez la chanson :</h3>
-        <p>Artiste : {{.ArtistName}}</p>
-        <p>Titre : {{.TrackName}}</p>
+        <!-- <p>Artiste : {{.ArtistName}}</p>
+        <p>Titre : {{.TrackName}}</p> -->
         <button onclick="playMusic('{{.TrackPreviewURL}}')">Jouer</button>
         <audio id="musicPlayer" controls style="display: none;"></audio>
     </div>
 
-    <form id="songForm" action="/check-answer" method="post">
-        <input type="text" id="userAnswer" name="userAnswer" placeholder="Entrez le titre de la chanson" required>
-        <button type="submit">Soumettre</button>
-    </form>    
+<script src="/static/blindtest.js"></script> 
 
-    <div id="score">Score: 0</div>
-    <div id="resultMessage"></div>
-    <span id="countdown"></span>
-    <button id="quitButton">Quitter</button>
-
-    <script src="/static/blindtest.js"></script>
 </body>
 </html>

@@ -10,13 +10,16 @@
     <div class="player-wrapper">
         <h2>Blind Test</h2>
         <h3>Devinez la chanson :</h3>
-        <!-- <p>Artiste : {{.ArtistName}}</p>
-        <p>Titre : {{.TrackName}}</p> -->
-        <button onclick="playMusic('{{.TrackPreviewURL}}')">Jouer</button>
+        <button onclick="rewindMusic()">-5s</button>
+        <button onclick="togglePlayPause()">Play/Pause</button>
+        <button onclick="forwardMusic()">+5s</button>
         <audio id="musicPlayer" controls style="display: none;"></audio>
     </div>
 
 <script src="/static/blindtest.js"></script> 
+<script>
+    playMusic('{{.TrackPreviewURL}}');
+</script>
 
 </body>
 </html>

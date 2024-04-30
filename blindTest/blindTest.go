@@ -16,7 +16,7 @@ import (
 const clientID = "dcb92b47b4fd450094f6e91c12bd1e4d"
 const clientSecret = "fa6ef02fc29e4def8b8bf60bdff4ea75"
 const tokenURL = "https://accounts.spotify.com/api/token"
-const playlistID = "1vCUdlD8Ic1KyEMctetRbU"
+const playlistID = "5kN2mR7rsJh5JjWkOizzzU"
 const SpotifyAPIBase = "https://api.spotify.com/v1"
 
 var httpClient = &http.Client{}

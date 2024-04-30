@@ -3,16 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music player</title>
+    <title>Blind Test</title>
     <link rel="stylesheet" href="./static/blind-test.css">
 </head>
 <body>
     <div class="player-wrapper">
-        <iframe id="spotifyPlayer" src="https://open.spotify.com/embed/track/{{.TrackID}}?utm_source=generator" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-        <form action="/submit" method="post">
-        </form>
-        <div class="cover" id="cover"></div>
-        <div class="cover2" id="cover2"></div>
+        <h2>Blind Test</h2>
+        <h3>Devinez la chanson :</h3>
+        <button onclick="rewindMusic()">-5s</button>
+        <button onclick="togglePlayPause()">Play/Pause</button>
+        <button onclick="forwardMusic()">+5s</button>
+        <audio id="musicPlayer" controls style="display: none;"></audio>
     </div>
+
+<script src="/static/blindtest.js"></script> 
+<script>
+    playMusic('{{.TrackPreviewURL}}');
+</script>
+
 </body>
 </html>

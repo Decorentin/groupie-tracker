@@ -7,8 +7,8 @@ import (
 
 	// Our packages
 	blindtest "test/blindTest"
+	"test/dbHandlers"
 	guessthesong "test/guessTheSong"
-	"test/handlers"
 
 	//SQLite driver
 	_ "github.com/mattn/go-sqlite3"
@@ -64,9 +64,9 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	http.HandleFunc("/", handlers.LoginHandler(db))
-	http.HandleFunc("/login", handlers.LoginHandler(db))
-	http.HandleFunc("/register", handlers.RegisterHandler(db))
+	http.HandleFunc("/", dbHandlers.LoginHandler(db))
+	http.HandleFunc("/login", dbHandlers.LoginHandler(db))
+	http.HandleFunc("/register", dbHandlers.RegisterHandler(db))
 
 	http.HandleFunc("/home", serveFile("home.html"))
 	http.HandleFunc("/win", serveFile("win.html"))

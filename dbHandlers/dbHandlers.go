@@ -1,11 +1,15 @@
-package handlers
+package dbHandlers
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"test/user"
+	"unicode"
 )
 
 // serveFile retourne un gestionnaire qui sert un fichier spécifique.
@@ -22,7 +26,10 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			login := r.FormValue("pseudo")
 			password := r.FormValue("password")
 
-			loggedIn, err := user.LoginUser(db, login, password)
+			// Hachage du mot de passe avec SHA-256 avant de le comparer
+			hashedPassword := hashPassword(password)
+
+			loggedIn, err := user.LoginUser(db, login, hashedPassword)
 			if err != nil {
 				log.Println("Login failed:", err)
 				http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
@@ -56,7 +63,17 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 				return
 			}
 
-			newUser := user.User{Pseudo: pseudo, Email: email, Password: password}
+			// Vérification de la complexité du mot de passe
+			passwordEntropy := passwordEntropy(password)
+			if passwordEntropy < 80 { // Changement ici pour 80 bits
+				http.Error(w, "Le mot de passe doit avoir une entropie d'au moins 80", http.StatusBadRequest)
+				return
+			}
+
+			// Hachage du mot de passe avec SHA-256 avant de l'enregistrer
+			hashedPassword := hashPassword(password)
+
+			newUser := user.User{Pseudo: pseudo, Email: email, Password: hashedPassword}
 			err := user.RegisterUser(db, newUser)
 			if err != nil {
 				log.Println("Failed to register user:", err)
@@ -69,4 +86,33 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 			http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
 		}
 	}
+}
+
+// Fonction pour hasher un mot de passe avec l'algorithme SHA-256
+func hashPassword(password string) string {
+	hash := sha256.New()
+	hash.Write([]byte(password))
+	hashedPassword := hex.EncodeToString(hash.Sum(nil))
+	return hashedPassword
+}
+
+// Fonction pour calculer l'entropie du mot de passe
+func passwordEntropy(password string) int {
+	var (
+		entropy float64
+		charset float64
+	)
+
+	for _, char := range password {
+		if unicode.IsLetter(char) {
+			charset += 52 // 26 lowercase + 26 uppercase
+		} else if unicode.IsDigit(char) {
+			charset += 10 // 10 digits
+		} else {
+			charset += 33 // 33 special characters
+		}
+	}
+
+	entropy = float64(len(password)) * (math.Log2(charset))
+	return int(entropy)
 }

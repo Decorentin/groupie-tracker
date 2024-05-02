@@ -23,17 +23,21 @@ function togglePlayPause() {
     }
 }
 
+function removeAccents(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 function verifyAnswer(guessTrack) {
     var resultDiv = document.getElementById("result");
+    var correctTrackName = removeAccents(document.getElementById('blindtest').getAttribute('data-track'));
 
-    var correctTrackName = document.getElementById('blindtest').getAttribute('data-track');
-
-    if (guessTrack.toLowerCase() === correctTrackName.toLowerCase()) {
+    if (removeAccents(guessTrack.toLowerCase()) === correctTrackName.toLowerCase()) {
         resultDiv.innerHTML = "Félicitations ! Vous avez deviné la chanson correctement : " + correctTrackName;
     } else {
         resultDiv.innerHTML = "Désolé, votre réponse est incorrecte.";
     }
 }
+
 
 document.getElementById("blindTestForm").addEventListener("submit", function(event) {
     event.preventDefault();

@@ -1,50 +1,85 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Plateforme de Jeux Musicaux</title>
+    <title>Home - Musical Games Platform</title>
     <link rel="stylesheet" href="./static/home.css">
 </head>
 <body>
     <header>
-        <div class="logo">Logo</div>
-        <nav>
-            <ul>
-                <li><a href="#games">Nos Jeux</a></li>
-                <li><a href="/scoreboard">Classement</a></li>
-                <li><a href="/signin">Connexion / Inscription</a></li>
-            </ul>
-        </nav>
+        <!-- <div class="logo">Logo</div> -->
+        <a href="/scoreboard" class="header-button-link">
+            <button class="header-button">Leaderboard</button>
+          </a>
+          
     </header>
     <main>
         <section class="intro">
-            <h1>Bienvenue sur notre Plateforme de Jeux Musicaux</h1>
-            <p>Rejoignez une communauté passionnée par la musique et testez vos connaissances à travers nos différents jeux.</p>
+            <!-- <h1 class="typewrite">Welcome to our Musical Games Platform</h1> -->
         </section>
         <section id="games">
-            <div class="game">
-                <img src="placeholder-game1.jpg" alt="Guess the Song">
-                <h2>Guess the Song</h2>
-                <p>Devinez le titre de la chanson à partir des paroles données.</p>
-                <a href="/guess-the-song">Jouer maintenant</a>
+            <div class="game flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <h2>Guess the Song</h2>
+                    </div>
+                    <div class="flip-card-back">
+                        <!-- <img src="static/dance1.gif"> -->
+                        <p class="typewritee">Guess the song title from the given lyrics.</p>
+                        <button class="big-button" onclick="location.href='/guess-the-song'">Play Now</button>
+                    </div>
+                </div>
+                <canvas id="stars" width="300" height="300"></canvas>
             </div>
-            <div class="game">
-                <img src="placeholder-game2.jpg" alt="Blind Test">
-                <h2>Blind Test</h2>
-                <p>Identifiez la chanson jouée le plus rapidement possible.</p>
-                <a href="/blind-test">Jouer maintenant</a>
+            <div class="game flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <h2>Blind Test</h2>
+                    </div>
+                    <div class="flip-card-back">
+                        <!-- <img src="static/dance2.gif"> -->
+                        <p class="typewritee">Identify the song being played as quickly as possible.</p>
+                        <button class="big-button" onclick="location.href='/blind-test'">Play Now</button>
+                    </div>
+                </div>
             </div>
-            <div class="game">
-                <img src="placeholder-game3.jpg" alt="Petit Bac">
-                <h2>Petit Bac</h2>
-                <p>Un jeu de lettres sur le thème de la musique.</p>
-                <a href="/petit-bac">Jouer maintenant</a>
+            <div class="game flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <h2>PetitBac</h2>
+                    </div>
+                    <div class="flip-card-back">
+                        <!-- <img src="static/dance3.gif"> -->
+                        <p class="typewritee">A letter-based game on the theme of music.</p>
+                        <button class="big-button" onclick="location.href='/petitbac'">Play Now</button>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
+
+    <div id="hey"><div id="layer-up"></div></div>
+    <div id="layer-0">
+	
+	<div id="layer-1">
+		<div id="layer-2">
+			<div id="lines">
+				<div id="layer-corner"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="mtnZZZ"></div>
+
+<p class="typewrite">Join a community passionate about music and test your knowledge with our various games.</p>
+
+     
     <footer>
-        <p>© 2024 Plateforme de Jeux Musicaux. Tous droits réservés.</p>
+        <p>© 2024 Musical Games Platform. All rights reserved.</p>
     </footer>
+    </div>
+    
 </body>
-</html>
+</html

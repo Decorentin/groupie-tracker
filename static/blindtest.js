@@ -60,7 +60,7 @@ function verifyAnswer(guessTrack) {
         localStorage.setItem('score', score);
 
         if (score >= 3) { // Rediriger vers le scoreboard lorsque le score atteint 3
-            window.location.href = "/scoreboard";
+            window.location.href = "/scoreboard" + "?score=" + score;
         }
     } else {
         resultDiv.innerHTML = "Désolé, votre réponse est incorrecte.";

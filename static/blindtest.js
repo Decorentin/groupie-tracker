@@ -4,7 +4,7 @@ var submitted = false;
 // Fonction pour démarrer le compteur
 function startCountdown() {
     // Démarrer le compteur (15 secondes)
-    var countDownSeconds = 2;
+    var countDownSeconds = 5;
     var countdownInterval = setInterval(function() {
         document.getElementById('countdown').innerText = countDownSeconds;
         countDownSeconds--;

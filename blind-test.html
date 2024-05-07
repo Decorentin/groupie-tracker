@@ -7,19 +7,29 @@
     <link rel="stylesheet" href="./static/blind-test.css">
 </head>
 <body>
-    <div class="player-wrapper">
+    <div class="player-wrapper" id="blindtest" data-artist="{{.ArtistName}}" data-track="{{.TrackName}}">
         <h2>Blind Test</h2>
-        <h3>Devinez la chanson :</h3>
+        <h3>Devinez la chanson : {{.ArtistName}} - {{.TrackName}}</h3>
+        <form id="blindTestForm">
+            <label for="guessTrack">Titre de la chanson :</label>
+            <input type="text" id="guessTrack" name="guessTrack" required><br><br>
+
+            <button type="submit">Vérifier</button>
+        </form>
+
         <button onclick="rewindMusic()">-5s</button>
-        <button onclick="togglePlayPause()">Play/Pause</button>
+        <button onclick="togglePlayPause()">Lecture/Pause</button>
         <button onclick="forwardMusic()">+5s</button>
         <audio id="musicPlayer" controls style="display: none;"></audio>
+
+        <div id="result"></div>
+        <button onclick="restartGame()">Relancer Partie</button>
     </div>
 
-<script src="/static/blindtest.js"></script> 
-<script>
-    playMusic('{{.TrackPreviewURL}}');
-</script>
+    <script src="/static/blindtest.js"></script>
+    <script>
+        playMusic('{{.TrackPreviewURL}}') ;
+    </script>
 
 </body>
 </html>

@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <h1 id="songTitle">Trouvez le titre :</h1>
-        <!-- <h1 id="songTitle">[Titre de la chanson] par [Artiste]</h1> -->
+        <h1 id="songTitle">[Titre de la chanson] par [Artiste]</h1>
 
         <table id="lyricsTable">
             <tr>
@@ -20,14 +20,19 @@
         </table>
 
         <form id="songForm" action="/check-answer" method="post">
-            <input type="text" id="userAnswer" name="userAnswer" placeholder="Entrez le titre de la chanson">
+            <input type="text" id="userAnswer" name="userAnswer" placeholder="Entrez le titre de la chanson" required>
             <button type="submit">Soumettre</button>
-        </form>
+        </form>        
 
+        <div id="score">Score: 0</div>
         <div id="resultMessage"></div>
+        <span id="countdown"></span>
+        <button id="quitButton">Quitter</button>
+
+
     </div>
 
-    <script src="/static/result.js"></script> 
+    <script src="/static/script.js"></script> 
 
 </body>
 </html>

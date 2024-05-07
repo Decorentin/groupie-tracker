@@ -75,10 +75,6 @@ func main() {
 
 	http.HandleFunc("/blind-test", blindtest.BlindTestHandler)
 
-	http.HandleFunc("/join-room", dbHandlers.JoinRoomHandler(db))
-	http.HandleFunc("/get-room-details", dbHandlers.GetRoomDetailsHandler(db))
-	http.HandleFunc("/delete-room", dbHandlers.DeleteRoomHandler(db))
-
 	http.ListenAndServe(":8080", nil)
 }
 

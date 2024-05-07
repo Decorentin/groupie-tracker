@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victoire !</title>
+</head>
+<body>
+    <h1>Félicitations ! Vous avez gagné !</h1>
+    <p>Votre score est : <span id="score"></span></p>
+
+    <script>
+        // Récupérer le score depuis l'URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var score = urlParams.get('score');
+
+        // Afficher le score sur la page
+        document.getElementById('score').innerText = score;
+    </script>
+</body>
+</html>

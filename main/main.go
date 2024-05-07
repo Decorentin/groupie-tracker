@@ -69,6 +69,7 @@ func main() {
 	http.HandleFunc("/register", dbHandlers.RegisterHandler(db))
 
 	http.HandleFunc("/home", serveFile("home.html"))
+	http.HandleFunc("/loose", serveFile("loose.html"))
 
 	http.HandleFunc("/guess-the-song", guessthesong.GuessTheSongHandler)
 	http.HandleFunc("/check-answer", guessthesong.CheckAnswerHandler)

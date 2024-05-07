@@ -60,7 +60,7 @@ function verifyAnswer(guessTrack) {
         localStorage.setItem('score', score);
 
         if (score >= 3) { // Rediriger vers le scoreboard lorsque le score atteint 3
-            window.location.href = "scoreboard.html";
+            window.location.href = "/scoreboard";
         }
     } else {
         resultDiv.innerHTML = "Désolé, votre réponse est incorrecte.";
@@ -72,7 +72,7 @@ function verifyAnswer(guessTrack) {
         if (score >= 3 || faults >= 5) {
             resultDiv.innerHTML = "Trop de fautes ou de tentatives. Vous avez perdu !";
             // Rediriger vers la page de défaite
-            window.location.href = "loose.html";
+            window.location.href = "/loose";
         }
         // Si le score atteint 5, réinitialiser le score pour ne pas atteindre 5 fautes
         if (score >= 5) {

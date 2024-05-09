@@ -70,6 +70,7 @@ func main() {
 
 	http.HandleFunc("/home", serveFile("home.html"))
 	http.HandleFunc("/win", serveFile("win.html"))
+	http.HandleFunc("/lose", serveFile("lose.html"))
 
 	http.HandleFunc("/guess-the-song", guessthesong.GuessTheSongHandler)
 	http.HandleFunc("/check-answer", guessthesong.CheckAnswerHandler)

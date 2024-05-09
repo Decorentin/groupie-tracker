@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Victoire !</title>
+    <title>Défaite !</title>
 </head>
 <body>
-    <h1>Félicitations ! Vous avez gagné !</h1>
+    <h1>Défaite !</h1>
+    <!-- Afficher le score depuis le stockage local -->
     <p>Votre score est : <span id="score"></span></p>
-
+    <p>Vous avez épuisé tous vos essais. Essayez encore ?</p>
+    <!-- Ajouter un bouton pour revenir à la page d'accueil -->
     <button id="returnHome">Retour à la page d'accueil</button>
 
     <script>
-        // Récupérer le score depuis l'URL
-        var urlParams = new URLSearchParams(window.location.search);
-        var score = urlParams.get('score');
+        // Récupérer le score depuis le stockage local
+        var score = localStorage.getItem('score');
 
         // Afficher le score sur la page
         document.getElementById('score').innerText = score;
@@ -25,7 +26,7 @@
             localStorage.setItem('score', 0);
             // Réinitialiser le compteur d'essais à zéro
             localStorage.setItem('wrongAttempts', 0);
-            // Rediriger l'utilisateur vers la page d'accueil
+
             window.location.href = "/home"; // Mettez ici le chemin de votre page d'accueil
         });
     </script>

@@ -9,6 +9,7 @@ import (
 	blindtest "test/blindTest"
 	"test/dbHandlers"
 	guessthesong "test/guessTheSong"
+	"test/petitBac"
 
 	//SQLite driver
 	_ "github.com/mattn/go-sqlite3"
@@ -75,6 +76,8 @@ func main() {
 	http.HandleFunc("/check-answer", guessthesong.CheckAnswerHandler)
 
 	http.HandleFunc("/blind-test", blindtest.BlindTestHandler)
+
+	http.HandleFunc("/petit-bac", petitBac.PetitBacHandler())
 
 	http.ListenAndServe(":8080", nil)
 }

@@ -1,11 +1,11 @@
-// Déclaration de la variable pour suivre l'état de la soumission
-var submitted = false;
+// Déclaration de la letiable pour suivre l'état de la soumission
+let submitted = false;
 
 // Fonction pour démarrer le compteur
 function startCountdown() {
     // Démarrer le compteur (15 secondes)
-    var countDownSeconds = 5;
-    var countdownInterval = setInterval(function() {
+    let countDownSeconds = 15;
+    let countdownInterval = setInterval(function() {
         document.getElementById('countdown').innerText = countDownSeconds;
         countDownSeconds--;
         if (countDownSeconds < 0) {
@@ -20,8 +20,8 @@ function startCountdown() {
 startCountdown();
 
 // Initialiser le score à partir du stockage local
-var score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
-var faults = localStorage.getItem('faults') ? parseInt(localStorage.getItem('faults')) : 0;
+let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+let faults = localStorage.getItem('faults') ? parseInt(localStorage.getItem('faults')) : 0;
 document.getElementById('score').innerText = "Score: " + score;
 document.getElementById('faults').innerText = "Fautes: " + faults;
 
@@ -32,7 +32,7 @@ document.getElementById('blindTestForm').addEventListener('submit', function(eve
     // Vérifier si la soumission a déjà été effectuée
     if (!submitted) {
         // Récupérer la valeur de la réponse de l'utilisateur
-        var guessTrack = document.getElementById('guessTrack').value;
+        let guessTrack = document.getElementById('guessTrack').value;
 
         // Vérifier la réponse de l'utilisateur
         verifyAnswer(guessTrack);
@@ -49,8 +49,8 @@ function resetSubmission() {
 
 // Fonction pour vérifier la réponse de l'utilisateur
 function verifyAnswer(guessTrack) {
-    var resultDiv = document.getElementById("result");
-    var correctTrackName = removeAccents(document.getElementById('blindtest').getAttribute('data-track'));
+    let resultDiv = document.getElementById("result");
+    let correctTrackName = removeAccents(document.getElementById('blindtest').getAttribute('data-track'));
 
     if (removeAccents(guessTrack.trim().toLowerCase()) === correctTrackName.trim().toLowerCase()) {
         resultDiv.innerHTML = "Félicitations ! Vous avez deviné la chanson correctement : " + correctTrackName;
@@ -92,23 +92,23 @@ function restartGame() {
 }
 
 function playMusic(trackPreviewURL) {
-    var audioPlayer = document.getElementById('musicPlayer');
+    let audioPlayer = document.getElementById('musicPlayer');
     audioPlayer.src = trackPreviewURL;
     audioPlayer.play();
 }
 
 function rewindMusic() {
-    var audioPlayer = document.getElementById('musicPlayer');
+    let audioPlayer = document.getElementById('musicPlayer');
     audioPlayer.currentTime -= 5;
 }
 
 function forwardMusic() {
-    var audioPlayer = document.getElementById('musicPlayer');
+    let audioPlayer = document.getElementById('musicPlayer');
     audioPlayer.currentTime += 5;
 }
 
 function togglePlayPause() {
-    var audioPlayer = document.getElementById('musicPlayer');
+    let audioPlayer = document.getElementById('musicPlayer');
     if (audioPlayer.paused) {
         audioPlayer.play();
     } else {
@@ -128,7 +128,7 @@ function resetScore() {
 }
 
 // Récupérer le bouton Quitter
-var quitButton = document.getElementById('quitButton');
+let quitButton = document.getElementById('quitButton');
 
 // Ajouter un écouteur d'événements au clic sur le bouton Quitter
 quitButton.addEventListener('click', function() {

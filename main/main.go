@@ -6,10 +6,10 @@ import (
 	"net/http"
 
 	// Import custom packages
-	blindtest "test/blindTest"
-	"test/dbHandlers"
-	guessthesong "test/guessTheSong"
-	"test/petitBac"
+	blindtest "groupie/blindTest"
+	"groupie/dbHandlers"
+	guessthesong "groupie/guessTheSong"
+	"groupie/petitBac"
 
 	// Import SQLite driver
 	_ "github.com/mattn/go-sqlite3"

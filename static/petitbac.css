@@ -1,0 +1,133 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Open Sans', sans-serif; /* Utilise Open Sans comme police par défaut */
+    background-image: url(retro.png);
+    background-size: 100%; /* Pour conserver la taille de l'image */
+}
+
+#formContainer {
+    margin: 50px auto;
+    width: 80%;
+    max-width: 600px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9); /* Couleur de fond semi-transparente */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Ombre portée */
+}
+
+form#responseForm p {
+    color: rgb(255, 255, 255);
+    font-weight: bold; /* Changer la couleur du texte en bleu */
+}
+
+
+h1 {
+    color: #fff;
+    text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #00eaff, 0 0 50px #00eaff, 0 0 60px #00eaff, 0 0 70px #00eaff;
+    animation: sparkle 8s ease-in-out infinite;
+    font-size: 3rem;
+    animation: neonEffect 5s infinite alternate ease-in-out;
+}
+
+@keyframes neonEffect {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+      text-shadow:
+        0 0 0.35vw #ff00fb, /* Réduit la dispersion de l'ombre */
+        0.05vw 0 0.65vw #c30bc0, /* Réduit la dispersion et l'intensité */
+        0.15vw 0 0.65vw #d4ff00, /* Ajustements similaires pour les autres ombres */
+        0 0 0vw #c30bc0,
+        0.05vw 0 0vw #c30bc0,
+        0.15vw 0 0vw #c30bc0,
+        0 0 0vw #c30bc0,
+        0.05vw 0 0vw #c30bc0, /* Couleur plus douce pour une ombre moins intense */
+        0.15vw 0 0vw #c30bc0;
+    }
+  
+    20%, 24%, 55% {
+      text-shadow: none;
+      
+    }
+  }
+
+
+.game-frame {
+    width: 70%;
+    margin: 0 auto;
+    padding: 20px;
+   
+    border-radius: 10px;
+    text-align: center;
+    backdrop-filter: blur(8px); /* Effet de fond flou */
+    background-color: rgba(255, 255, 255, 0.2); /* Couleur de fond semi-transparente */
+    backdrop-filter: blur(10px); /* Effet de flou */}
+
+
+/* Style pour le contenu à l'intérieur du cadre */
+.content {
+    margin-top: 20px;
+}
+
+/* Style pour les paragraphes */
+.game-frame p {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* Style pour les champs de saisie */
+.game-frame input[type="text"],
+.game-frame select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+}
+
+/* Style pour le bouton */
+.game-frame button {
+    padding: 10px 20px;
+    background-color: #b221cf;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Style pour le bouton au survol */
+.game-frame button:hover {
+    background-color: #b221cf;
+}
+
+/* Style pour le bouton de soumission */
+.header-button {
+    background-color: #b221cf;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Ajustement de la transition pour transform */
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    margin-left: 10px;
+    letter-spacing: 3px;
+  }
+
+  .header-button:hover {
+    transform: scale(1.1); /* Ajoute un effet de zoom au survol */
+}
+
+  .header-button a {
+    color: #fff;
+    text-decoration: none;
+  }
+p {
+    color: #fff;
+    font-weight: bolder;
+}

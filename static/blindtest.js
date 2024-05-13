@@ -1,112 +1,120 @@
-// Déclaration de la letiable pour suivre l'état de la soumission
+// Variable to track if the form has been submitted
 let submitted = false;
 
-// Fonction pour démarrer le compteur
+// Function to start the countdown timer
 function startCountdown() {
-    // Démarrer le compteur (15 secondes)
     let countDownSeconds = 15;
     let countdownInterval = setInterval(function() {
         document.getElementById('countdown').innerText = countDownSeconds;
         countDownSeconds--;
         if (countDownSeconds < 0) {
             clearInterval(countdownInterval);
-            // Actualiser la page après que le compteur soit écoulé
+            // Reload the page after the countdown is over
             window.location.reload();
         }
-    }, 1000); // 1000 millisecondes = 1 seconde
+    }, 1000); // 1000 milliseconds = 1 second
 }
 
-// Démarrer le compteur dès que la page est chargée
+// Start the countdown timer
 startCountdown();
 
-// Initialiser le score à partir du stockage local
+// Initialize the score and faults from local storage
 let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
 let faults = localStorage.getItem('faults') ? parseInt(localStorage.getItem('faults')) : 0;
 document.getElementById('score').innerText = "Score: " + score;
-document.getElementById('faults').innerText = "Fautes: " + faults;
+document.getElementById('faults').innerText = "Faults: " + faults;
 
-// Ajouter les événements nécessaires pour le formulaire de blind test
+// Add event listener for the blind test form submission
 document.getElementById('blindTestForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Empêcher le formulaire de se soumettre normalement
+    event.preventDefault(); 
 
-    // Vérifier si la soumission a déjà été effectuée
+    // Ensure the form is submitted only once
     if (!submitted) {
-        // Récupérer la valeur de la réponse de l'utilisateur
         let guessTrack = document.getElementById('guessTrack').value;
 
-        // Vérifier la réponse de l'utilisateur
+        // Verify the user's answer
         verifyAnswer(guessTrack);
 
-        // Marquer la soumission comme effectuée
+        // Mark form as submitted
         submitted = true;
     }
 });
 
-// Fonction pour réinitialiser l'état de la soumission
+// Function to reset form submission status
 function resetSubmission() {
     submitted = false;
 }
 
-// Fonction pour vérifier la réponse de l'utilisateur
+// Function to verify the user's answer
 function verifyAnswer(guessTrack) {
     let resultDiv = document.getElementById("result");
     let correctTrackName = removeAccents(document.getElementById('blindtest').getAttribute('data-track'));
 
+    // Check if the user's guess is correct
     if (removeAccents(guessTrack.trim().toLowerCase()) === correctTrackName.trim().toLowerCase()) {
-        resultDiv.innerHTML = "Félicitations ! Vous avez deviné la chanson correctement : " + correctTrackName;
-        // Si la réponse est correcte, incrémenter le score et afficher le nouveau score
+        resultDiv.innerHTML = "Congratulations! You guessed the song correctly: " + correctTrackName;
+
+        // Increment score and update UI
         score++;
         document.getElementById('score').innerText = "Score: " + score;
         localStorage.setItem('score', score);
 
-        if (score >= 3) { // Rediriger vers le scoreboard lorsque le score atteint 3
+        // Redirect to scoreboard if score is equal or greater than 3
+        if (score >= 3) { 
             window.location.href = "/scoreboard" + "?score=" + score;
         }
     } else {
-        resultDiv.innerHTML = "Désolé, votre réponse est incorrecte.";
-        // Si la réponse est incorrecte, incrémenter le compteur de fautes
+        // Handle incorrect guess
+        resultDiv.innerHTML = "Sorry, your answer is incorrect.";
+
+        // Increment faults and update UI
         faults++;
-        document.getElementById('faults').innerText = "Fautes: " + faults;
+        document.getElementById('faults').innerText = "Faults: " + faults;
         localStorage.setItem('faults', faults);
-        // Vérifier si le joueur a atteint 3 fautes ou 5 tentatives
+      
+        // Redirect to "lose" page if score or faults exceeds the threshold
         if (score >= 3 || faults >= 5) {
-            resultDiv.innerHTML = "Trop de fautes ou de tentatives. Vous avez perdu !";
-            // Rediriger vers la page de défaite
-            window.location.href = "/loose";
+            resultDiv.innerHTML = "Too many faults or attempts. You lost!";
+            window.location.href = "/lose";
         }
-        // Si le score atteint 5, réinitialiser le score pour ne pas atteindre 5 fautes
+
+        // Reset score if it reaches 5
         if (score >= 5) {
             score = 0;
             localStorage.setItem('score', score);
         }
     }
 
-    // Réinitialiser l'état de la soumission pour permettre une nouvelle vérification
+    // Reset form submission status
     resetSubmission();
 }
 
-// Fonction pour redémarrer le jeu
+// Function to restart the game by resetting score and faults
 function restartGame() {
-    localStorage.removeItem('faults'); // Réinitialiser le compteur de fautes
-    location.reload();
+    localStorage.removeItem('faults'); // Remove faults from local storage
+    location.reload(); // Reload the page
 }
 
+// Function to play music
 function playMusic(trackPreviewURL) {
     let audioPlayer = document.getElementById('musicPlayer');
     audioPlayer.src = trackPreviewURL;
     audioPlayer.play();
 }
 
+// Function to rewind music by 5 seconds
 function rewindMusic() {
     let audioPlayer = document.getElementById('musicPlayer');
     audioPlayer.currentTime -= 5;
 }
 
+// Function to forward music by 5 seconds
 function forwardMusic() {
     let audioPlayer = document.getElementById('musicPlayer');
     audioPlayer.currentTime += 5;
 }
 
+// Function to toggle play/pause of music
 function togglePlayPause() {
     let audioPlayer = document.getElementById('musicPlayer');
     if (audioPlayer.paused) {
@@ -116,24 +124,23 @@ function togglePlayPause() {
     }
 }
 
+// Function to remove accents from a string
 function removeAccents(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-// Fonction pour réinitialiser le score et le compteur de fautes à zéro
+// Function to reset score and faults
 function resetScore() {
-    localStorage.setItem('score', 0);
-    localStorage.setItem('faults', 0);
-    location.reload();
+    localStorage.setItem('score', 0); // Reset score
+    localStorage.setItem('faults', 0); // Reset faults
+    location.reload(); // Reload the page
 }
 
-// Récupérer le bouton Quitter
+// Event listener for the quit button
 let quitButton = document.getElementById('quitButton');
-
-// Ajouter un écouteur d'événements au clic sur le bouton Quitter
 quitButton.addEventListener('click', function() {
-    // Réinitialiser le score et les fautes avant de quitter
+    // Reset score and faults
     resetScore();
-    // Rediriger l'utilisateur vers la page d'accueil
-    window.location.href = "/home"; // Mettez ici le chemin de votre page d'accueil
+    // Redirect to home page
+    window.location.href = "/home";
 });

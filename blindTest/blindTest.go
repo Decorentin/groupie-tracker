@@ -13,24 +13,29 @@ import (
 	"time"
 )
 
-const clientID = "dcb92b47b4fd450094f6e91c12bd1e4d"
-const clientSecret = "fa6ef02fc29e4def8b8bf60bdff4ea75"
-const tokenURL = "https://accounts.spotify.com/api/token"
-const playlistID = "1vCUdlD8Ic1KyEMctetRbU"
-const SpotifyAPIBase = "https://api.spotify.com/v1"
+// Constants for Spotify API authentication
+const (
+	clientID       = "dcb92b47b4fd450094f6e91c12bd1e4d"
+	clientSecret   = "fa6ef02fc29e4def8b8bf60bdff4ea75"
+	tokenURL       = "https://accounts.spotify.com/api/token"
+	playlistID     = "1vCUdlD8Ic1KyEMctetRbU"
+	SpotifyAPIBase = "https://api.spotify.com/v1"
+)
 
 var httpClient = &http.Client{}
 
+// Struct for storing blind test data
 type BlindTestStruct struct {
 	TrackID         string
 	TrackName       string
 	ArtistName      string
 	Token           string
-	TrackPreviewURL string // Ajout de l'URL de prévisualisation de la piste
+	TrackPreviewURL string
 }
 
 var bt *BlindTestStruct
 
+// Function to get access token from Spotify API
 func getAccessToken() (string, error) {
 	data := url.Values{}
 	data.Set("grant_type", "client_credentials")
@@ -67,6 +72,7 @@ func getAccessToken() (string, error) {
 	return token, nil
 }
 
+// Function to get a random track from a Spotify playlist
 func getRandomTrackFromPlaylist(accessToken, playlistID string) (string, string, string, string, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", SpotifyAPIBase+"/playlists/"+playlistID+"/tracks", nil)
@@ -128,8 +134,8 @@ func getRandomTrackFromPlaylist(accessToken, playlistID string) (string, string,
 	return trackName, artistName, trackURI, trackPreviewURL, nil
 }
 
+// BlindTestHandler handles requests for blind test
 func BlindTestHandler(w http.ResponseWriter, r *http.Request) {
-	// Obtention du token et de la piste comme précédemment
 	accessToken, err := getAccessToken()
 	if err != nil {
 		http.Error(w, "Failed to get access token", http.StatusInternalServerError)
@@ -148,10 +154,9 @@ func BlindTestHandler(w http.ResponseWriter, r *http.Request) {
 		TrackName:       trackName,
 		ArtistName:      artistName,
 		Token:           accessToken,
-		TrackPreviewURL: trackPreviewURL, // Ajout de l'URL de prévisualisation de la piste
+		TrackPreviewURL: trackPreviewURL,
 	}
 
-	// Charger le template
 	tmplPath := filepath.Join("blind-test.html")
 	tmpl, err := template.ParseFiles(tmplPath)
 	if err != nil {
@@ -159,7 +164,6 @@ func BlindTestHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Générer la réponse HTML avec le template
 	w.Header().Set("Content-Type", "text/html")
 	tmpl.Execute(w, bt)
 }

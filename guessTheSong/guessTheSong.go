@@ -14,14 +14,19 @@ import (
 	"github.com/gosimple/slug"
 )
 
-const clientID = "dcb92b47b4fd450094f6e91c12bd1e4d"
-const clientSecret = "fa6ef02fc29e4def8b8bf60bdff4ea75"
-const tokenURL = "https://accounts.spotify.com/api/token"
-const playlistID = "1vCUdlD8Ic1KyEMctetRbU"
-const SpotifyAPIBase = "https://api.spotify.com/v1"
+// Constants for Spotify API authentication and endpoints
+const (
+	clientID       = "dcb92b47b4fd450094f6e91c12bd1e4d"
+	clientSecret   = "fa6ef02fc29e4def8b8bf60bdff4ea75"
+	tokenURL       = "https://accounts.spotify.com/api/token"
+	playlistID     = "1vCUdlD8Ic1KyEMctetRbU"
+	SpotifyAPIBase = "https://api.spotify.com/v1"
+)
 
+// Variable to store the selected song title
 var selectedSongTitle string
 
+// Function to retrieve access token from Spotify API
 func getAccessToken() (string, error) {
 	client := &http.Client{}
 	data := url.Values{}
@@ -59,6 +64,7 @@ func getAccessToken() (string, error) {
 	return token, nil
 }
 
+// Function to retrieve a random track from a Spotify playlist
 func getRandomTrackFromPlaylist(accessToken, playlistID string) (string, string, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", SpotifyAPIBase+"/playlists/"+playlistID+"/tracks", nil)
@@ -110,6 +116,7 @@ func getRandomTrackFromPlaylist(accessToken, playlistID string) (string, string,
 	return trackName, artistName, nil
 }
 
+// Function to retrieve lyrics from Musixmatch API
 func getLyricsFromMusixmatch(trackName, artistName, apiKey string) (string, error) {
 	baseURL := "https://api.musixmatch.com/ws/1.1/"
 	endpoint := "matcher.lyrics.get"
@@ -141,73 +148,66 @@ func getLyricsFromMusixmatch(trackName, artistName, apiKey string) (string, erro
 	return lyrics, nil
 }
 
+// Handler to check user's answer against the selected song title
 func CheckAnswerHandler(w http.ResponseWriter, r *http.Request) {
-	// Vérifier si la méthode HTTP est POST
 	if r.Method != http.MethodPost {
-		http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Récupérer la réponse de l'utilisateur depuis le formulaire
 	userAnswer := r.FormValue("userAnswer")
 
-	// Convertir la réponse de l'utilisateur et le titre de la chanson sélectionnée aléatoirement en minuscules sans accents
 	userAnswerLower := removeAccents(strings.ToLower(userAnswer))
 	selectedSongTitleLower := removeAccents(strings.ToLower(selectedSongTitle))
 
-	// Vérifier si la réponse de l'utilisateur correspond au titre de la chanson sélectionné aléatoirement
 	if userAnswerLower == selectedSongTitleLower {
-		// Envoyer une réponse de succès si la réponse est correcte
-		fmt.Fprintln(w, "Bravo, vous avez deviné la bonne chanson !")
+		fmt.Fprintln(w, "Congratulations, you guessed the right song!")
 	} else {
-		// Envoyer une réponse d'échec si la réponse est incorrecte
-		fmt.Fprintln(w, "Désolé, votre réponse est incorrecte.")
+		fmt.Fprintln(w, "Sorry, your answer is incorrect.")
 	}
 }
 
+// Function to remove accents from a string using slug package
 func removeAccents(s string) string {
 	return slug.Make(s)
 }
 
+// Handler to serve the Guess the Song game
 func GuessTheSongHandler(w http.ResponseWriter, r *http.Request) {
 	accessToken, err := getAccessToken()
 	if err != nil {
 		log.Println("Failed to get access token:", err)
-		http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
+		http.Error(w, "Connection error", http.StatusInternalServerError)
 		return
 	}
 
 	trackName, artistName, err := getRandomTrackFromPlaylist(accessToken, playlistID)
 	if err != nil {
 		log.Println("Failed to get random track:", err)
-		http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
+		http.Error(w, "Connection error", http.StatusInternalServerError)
 		return
 	}
 
-	// Stocker le titre de la chanson sélectionnée aléatoirement
 	selectedSongTitle = trackName
 
 	lyrics, err := getLyricsFromMusixmatch(trackName, artistName, "fcc277ce6c9bd4d25476e2107fffec18")
 	if err != nil {
 		log.Println("Failed to get lyrics:", err)
-		http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
+		http.Error(w, "Connection error", http.StatusInternalServerError)
 		return
 	}
 
-	// Lire le contenu du fichier lyrics.html
 	htmlContent, err := ioutil.ReadFile("guess-the-song.html")
 	if err != nil {
 		log.Println("Failed to read lyrics.html:", err)
-		http.Error(w, "Erreur de lecture du fichier HTML", http.StatusInternalServerError)
+		http.Error(w, "Failed to read HTML file", http.StatusInternalServerError)
 		return
 	}
 
-	// Remplacer les placeholders dans le contenu HTML
-	htmlContent = []byte(strings.ReplaceAll(string(htmlContent), "[Titre de la chanson]", trackName))
-	htmlContent = []byte(strings.ReplaceAll(string(htmlContent), "[Artiste]", artistName))
-	htmlContent = []byte(strings.ReplaceAll(string(htmlContent), "[Paroles]", lyrics))
+	htmlContent = []byte(strings.ReplaceAll(string(htmlContent), "[Song Title]", trackName))
+	htmlContent = []byte(strings.ReplaceAll(string(htmlContent), "[Artist]", artistName))
+	htmlContent = []byte(strings.ReplaceAll(string(htmlContent), "[Lyrics]", lyrics))
 
-	// Envoyer le contenu HTML au navigateur
 	w.Header().Set("Content-Type", "text/html")
 	w.Write(htmlContent)
 }

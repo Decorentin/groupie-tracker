@@ -12,34 +12,34 @@ import (
 	"unicode"
 )
 
-// serveFile retourne un gestionnaire qui sert un fichier spécifique.
+// serveFile returns a handler that serves a specific file.
 func serveFile(filename string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filename)
 	}
 }
 
-// LoginHandler gère les requêtes de connexion.
+// LoginHandler handles login requests.
 func LoginHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "POST" {
 			login := r.FormValue("pseudo")
 			password := r.FormValue("password")
 
-			// Hachage du mot de passe avec SHA-256 avant de le comparer
+			// Hashing the password with SHA-256 before comparison
 			hashedPassword := hashPassword(password)
 
 			loggedIn, err := user.LoginUser(db, login, hashedPassword)
 			if err != nil {
 				log.Println("Login failed:", err)
-				http.Error(w, "Erreur de connexion", http.StatusInternalServerError)
+				http.Error(w, "Login error", http.StatusInternalServerError)
 				return
 			}
 
 			if loggedIn {
 				http.Redirect(w, r, "/home", http.StatusSeeOther)
 			} else {
-				fmt.Fprintln(w, "Nom d'utilisateur ou mot de passe incorrect")
+				fmt.Fprintln(w, "Incorrect username or password")
 			}
 		} else {
 			serveFile("login.html")(w, r)
@@ -47,7 +47,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// RegisterHandler gère les requêtes d'inscription.
+// RegisterHandler handles registration requests.
 func RegisterHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
@@ -59,18 +59,18 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 			confirmPassword := r.FormValue("confirm_password")
 
 			if password != confirmPassword {
-				http.Error(w, "Les mots de passe ne correspondent pas", http.StatusBadRequest)
+				http.Error(w, "Passwords do not match", http.StatusBadRequest)
 				return
 			}
 
-			// Vérification de la complexité du mot de passe
+			// Checking password complexity
 			passwordEntropy := passwordEntropy(password)
-			if passwordEntropy < 80 { // Changement ici pour 80 bits
-				http.Error(w, "Le mot de passe doit avoir une entropie d'au moins 80", http.StatusBadRequest)
+			if passwordEntropy < 80 { // Changed here to 80 bits
+				http.Error(w, "Password must have at least 80 bits of entropy", http.StatusBadRequest)
 				return
 			}
 
-			// Hachage du mot de passe avec SHA-256 avant de l'enregistrer
+			// Hashing the password with SHA-256 before storing it
 			hashedPassword := hashPassword(password)
 
 			newUser := user.User{Pseudo: pseudo, Email: email, Password: hashedPassword}
@@ -83,12 +83,12 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		} else {
-			http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	}
 }
 
-// Fonction pour hasher un mot de passe avec l'algorithme SHA-256
+// Function to hash a password using SHA-256 algorithm
 func hashPassword(password string) string {
 	hash := sha256.New()
 	hash.Write([]byte(password))
@@ -96,7 +96,7 @@ func hashPassword(password string) string {
 	return hashedPassword
 }
 
-// Fonction pour calculer l'entropie du mot de passe
+// Function to calculate password entropy
 func passwordEntropy(password string) int {
 	var (
 		entropy float64

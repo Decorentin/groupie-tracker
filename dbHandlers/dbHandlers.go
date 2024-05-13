@@ -105,11 +105,11 @@ func passwordEntropy(password string) int {
 
 	for _, char := range password {
 		if unicode.IsLetter(char) {
-			charset += 52 // 26 lowercase + 26 uppercase
+			charset += 52
 		} else if unicode.IsDigit(char) {
-			charset += 10 // 10 digits
+			charset += 10
 		} else {
-			charset += 33 // 33 special characters
+			charset += 33
 		}
 	}
 

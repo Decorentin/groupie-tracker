@@ -2,33 +2,29 @@
 <head>
     <title>Petit Bac Game</title>
     <script>
-        // Fonction qui démarre quand la page est chargée
-        window.onload = function() {
-            // Définir la durée du timer en secondes
-            var timeLeft = 30;
-
-            // Mise à jour du timer toutes les secondes
-            var timerId = setInterval(countdown, 1000);
-
-            function countdown() {
-                if (timeLeft == 0) {
-                    clearTimeout(timerId);
-                    doSubmit(); // Appeler la fonction de soumission du formulaire
+        function startGame() {
+            var timeSelect = document.getElementById('timeSelect');
+            var timeLeft = parseInt(timeSelect.value, 10); // Récupérer le temps sélectionné et le convertir en entier
+            var timerId = setInterval(function() {
+                if (timeLeft <= 0) {
+                    clearInterval(timerId);
+                    document.getElementById('responseForm').submit(); // Soumettre le formulaire lorsque le timer atteint zéro
                 } else {
-                    // Mise à jour visuelle du timer pour l'utilisateur
                     document.getElementById('timer').innerHTML = timeLeft + ' seconds remaining';
                     timeLeft--;
                 }
-            }
-
-            function doSubmit() {
-                document.getElementById('responseForm').submit(); // Soumettre le formulaire
-            }
+            }, 1000);
         }
     </script>
 </head>
 <body>
-    <p id="timer">30 seconds remaining</p>
+    <select id="timeSelect">
+        <option value="15">15 Seconds</option>
+        <option value="30">30 Seconds</option>
+        <option value="60">60 Seconds</option>
+    </select>
+    <button onclick="startGame()">Start</button> <!-- Bouton pour démarrer le jeu -->
+    <p id="timer"></p>
     <p>Current Letter: {{.Letter}}</p> 
     <form method="POST" id="responseForm">
         <p>Artist: <input type="text" name="artist" /></p>

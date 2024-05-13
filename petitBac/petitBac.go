@@ -95,11 +95,14 @@ func AnswersHandler(w http.ResponseWriter, r *http.Request) {
 
 func ValidateAnswersHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		http.Redirect(w, r, "/petit-bac", http.StatusSeeOther)
+		// S'assurer que la méthode POST est utilisée
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	score := 0
+
+	// Vérifiez chaque réponse marquée comme correcte
 	if r.FormValue("artistCorrect") == "true" {
 		score++
 	}
@@ -116,11 +119,6 @@ func ValidateAnswersHandler(w http.ResponseWriter, r *http.Request) {
 		score++
 	}
 
-	result := "Sorry, you did not score enough."
-	if score >= 3 {
-		result = "Congratulations, you win a point!"
-	}
-
-	// Modifier ici pour inclure un lien direct vers la page du jeu
-	fmt.Fprintf(w, `<html><body><p>%s</p><a href='/petit-bac'>Try again</a></body></html>`, result)
+	// Afficher le score ou renvoyer une réponse appropriée
+	fmt.Fprintf(w, `<html><body><p>Your score: %d</p><a href='/petit-bac'>Try again</a></body></html>`, score)
 }

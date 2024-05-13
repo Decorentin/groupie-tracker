@@ -17,18 +17,21 @@
             <button type="submit">Vérifier</button>
         </form>
 
+        <div id="countdown">15</div> <!-- Ajout du compteur -->
+        <div id="score">Score: 0</div> <!-- Ajout du scoreboard -->
+        <div id="faults">Fautes: 0</div>
+        <button id="quitButton">Quitter</button>
         <button onclick="rewindMusic()">-5s</button>
         <button onclick="togglePlayPause()">Lecture/Pause</button>
         <button onclick="forwardMusic()">+5s</button>
         <audio id="musicPlayer" controls style="display: none;"></audio>
 
         <div id="result"></div>
-        <button onclick="restartGame()">Relancer Partie</button>
     </div>
 
     <script src="/static/blindtest.js"></script>
     <script>
-        playMusic('{{.TrackPreviewURL}}') ;
+        playMusic('{{.TrackPreviewURL}}');
     </script>
 
 </body>

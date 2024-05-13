@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS GAMES (
 }
 
 func main() {
-	db := initDB() // Initialize the database
+	db := initDB()   // Initialize the database
 	defer db.Close() // Ensure the database connection is closed on program termination
 
 	// Set up static file handling
@@ -74,6 +74,8 @@ func main() {
 	http.HandleFunc("/home", serveFile("home.html"))
 	http.HandleFunc("/win", serveFile("win.html"))
 	http.HandleFunc("/lose", serveFile("lose.html"))
+	http.HandleFunc("/loose", serveFile("loose.html"))
+	http.HandleFunc("/scoreboard", serveFile("scoreboard.html"))
 
 	http.HandleFunc("/guess-the-song", guessthesong.GuessTheSongHandler)
 	http.HandleFunc("/check-answer", guessthesong.CheckAnswerHandler)

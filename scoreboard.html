@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victoire !</title>
+    <link rel="stylesheet" href="/static/scoreboard.css">
+</head>
+<body>
+    <h1>Félicitations ! Vous avez gagné !</h1>
+    <p>Votre score est : <span id="score"></span></p>
+ 
+    <button onclick="restartGame()">Rejouer</button>
+    <script>
+        // Récupérer le score depuis l'URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var score = urlParams.get('score');
+
+        // Afficher le score sur la page
+        document.getElementById('score').innerText = score;
+
+        function restartGame() {
+            // Réinitialiser le score et les fautes avant de relancer le jeu
+            localStorage.setItem('score', 0);
+            window.location.href = "/blind-test"; // Assurez-vous que le nom du fichier est correct
+        }
+    </script>
+</body>
+</html>

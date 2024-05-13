@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Petit Bac Game</title>
+
+    <link rel="stylesheet" href="./static/petitbac.css">
     <script>
         function startGame() {
             var timeSelect = document.getElementById('timeSelect');
@@ -19,22 +21,27 @@
     </script>
 </head>
 <body>
-    <select id="timeSelect">
-        <option value="15">15 Seconds</option>
-        <option value="30">30 Seconds</option>
-        <option value="60">60 Seconds</option>
-    </select>
-    <button onclick="startGame()">Start</button>
-    <p id="timer"></p>
-    <p>Current Letter: {{.Letter}}</p> 
-    <p>Your Daily Score: {{.Score}}</p>  
-    <form method="POST" id="responseForm">
-        <p>Artist: <input type="text" name="artist" /></p>
-        <p>Album: <input type="text" name="album" /></p>
-        <p>Music Group: <input type="text" name="musicGroup" /></p>
-        <p>Instrument: <input type="text" name="instrument" /></p>
-        <p>Featuring: <input type="text" name="featuring" /></p>
-        <input type="submit" value="Submit" />
-    </form>
+    <div class="game-frame">
+        <h1>Welcome to the Game</h1>
+        <div class="content">
+            <select id="timeSelect">
+                <option value="15">15 Seconds</option>
+                <option value="30">30 Seconds</option>
+                <option value="60">60 Seconds</option>
+            </select>
+            <button class="header-button" onclick="startGame()">Start</button>
+            <p id="timer">Timer: <span id="timerValue">0</span></p>
+            <p>Current Letter: <span id="currentLetter">{{.Letter}}</span></p> 
+            <p>Your Daily Score: <span id="dailyScore">{{.Score}}</span></p>  
+            <form method="POST" id="responseForm">
+                <p>Artist: <input type="text" name="artist" /></p>
+                <p>Album: <input type="text" name="album" /></p>
+                <p>Music Group: <input type="text" name="musicGroup" /></p>
+                <p>Instrument: <input type="text" name="instrument" /></p>
+                <p>Featuring: <input type="text" name="featuring" /></p>
+                <button class="header-button" type="submit">Valider</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

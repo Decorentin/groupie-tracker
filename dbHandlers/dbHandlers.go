@@ -8,7 +8,7 @@ import (
 	"log"
 	"math"
 	"net/http"
-	"test/user"
+	"groupie/user"
 	"unicode"
 )
 

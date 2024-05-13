@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Défaite</title>
+    <link rel="stylesheet" href="/static/loose.css">
+</head>
+<body>
+    <div class="loose-message">
+        <h1>Vous avez perdu !</h1>
+        <p>Dommage ! Vous avez fait trop de fautes. Mieux chance la prochaine fois !</p>
+        <button onclick="restartGame()">Rejouer</button>
+    </div>
+
+    <script>
+        function restartGame() {
+            localStorage.setItem('score', 0);
+            localStorage.setItem('faults', 0);
+            window.location.href = "/blind-test";
+        }
+    </script>
+</body>
+</html>

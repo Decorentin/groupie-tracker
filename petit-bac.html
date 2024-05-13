@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Petit Bac Game</title>
+    <script>
+        function startGame() {
+            var timeSelect = document.getElementById('timeSelect');
+            var timeLeft = parseInt(timeSelect.value, 10);
+            var timerId = setInterval(function() {
+                if (timeLeft <= 0) {
+                    clearInterval(timerId);
+                    document.getElementById('responseForm').submit();
+                } else {
+                    document.getElementById('timer').innerHTML = timeLeft + ' seconds remaining';
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+    </script>
+</head>
+<body>
+    <select id="timeSelect">
+        <option value="15">15 Seconds</option>
+        <option value="30">30 Seconds</option>
+        <option value="60">60 Seconds</option>
+    </select>
+    <button onclick="startGame()">Start</button>
+    <p id="timer"></p>
+    <p>Current Letter: {{.Letter}}</p> 
+    <p>Your Daily Score: {{.Score}}</p>  
+    <form method="POST" id="responseForm">
+        <p>Artist: <input type="text" name="artist" /></p>
+        <p>Album: <input type="text" name="album" /></p>
+        <p>Music Group: <input type="text" name="musicGroup" /></p>
+        <p>Instrument: <input type="text" name="instrument" /></p>
+        <p>Featuring: <input type="text" name="featuring" /></p>
+        <input type="submit" value="Submit" />
+    </form>
+</body>
+</html>

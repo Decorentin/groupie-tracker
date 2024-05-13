@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Défaite !</title>
+</head>
+<body>
+    <h1>Défaite !</h1>
+    <p>Votre score est : <span id="score"></span></p>
+    <p>Vous avez épuisé tous vos essais. Essayez encore ?</p>
+    <button id="returnHome">Retour à la page d'accueil</button>
+
+    <script>
+        var score = localStorage.getItem('score');
+
+        document.getElementById('score').innerText = score;
+
+        document.getElementById('returnHome').addEventListener('click', function() {
+            localStorage.setItem('score', 0);
+            localStorage.setItem('wrongAttempts', 0);
+
+            window.location.href = "/home"; 
+        });
+    </script>
+</body>
+</html>

@@ -36,13 +36,19 @@ To get started with this project, you'll need:
     ```bash
     go mod tidy
 
+4. If you have packages problems, you can install them manually
+    ```bash
+    go get github.com/gosimple/slug
+    go get github.com/mattn/go-sqlite3
+    go get github.com/gosimple/unidecode
+
 ## Getting Started
 
 After installation, follow these steps to run the platform:
 
 1. Start the server:
     ```bash
-    go run main.go
+    go run main/main.go
 
 2. Navigate to http://localhost:8080 on your web browser to access the platform.
 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paroles de la chanson</title>
+    <link rel="stylesheet" href="/static/guess-the-song.css"> 
+</head>
+<body>
+    <div class="container">
+        <h1 id="songTitle">Trouvez le titre :</h1>
+
+        <table id="lyricsTable">
+            <tr>
+                <td>
+                    <pre id="songLyrics">[Paroles]</pre>
+                </td>
+            </tr>
+        </table>
+
+        <form id="songForm" action="/check-answer" method="post">
+            <input type="text" id="userAnswer" name="userAnswer" placeholder="Entrez le titre de la chanson" required>
+            <button type="submit">Soumettre</button>
+        </form>        
+
+        <div id="score">Score: 0</div>
+        <div id="attempts">Essais restants : 5</div>
+
+        <div id="resultMessage"></div>
+        <span id="countdown"></span>
+        <button id="quitButton">Quitter</button>
+
+
+    </div>
+
+    <script src="/static/script.js"></script> 
+
+</body>
+</html>

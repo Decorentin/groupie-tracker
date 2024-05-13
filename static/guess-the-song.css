@@ -1,28 +1,138 @@
-.container {
-    margin: 50px auto;
-    width: 80%;
-}
-
 #lyricsTable {
     border-collapse: collapse;
-    width: 100%;
+    width: 70%; /* Réduit la largeur du tableau */
+    margin: auto; /* Centre le tableau */
 }
 
 #lyricsTable td {
     border: 1px solid #443e3e;
     padding: 8px;
-    text-align: center; /* Centrer le contenu dans les cellules */
+    text-align: center; 
 }
 
 #songLyrics {
     white-space: pre-wrap;
     font-family: Arial, sans-serif;
-    margin: auto; /* Centrer le texte dans la cellule */
-    text-align: center; /* Centrer le texte dans la cellule */
+    text-align: center;
+    color: #fff;
 }
 
 #quitButton {
     position: absolute;
-    top: 20px; /* Ajustez la distance du haut selon vos besoins */
-    right: 20px; /* Ajustez la distance de la droite selon vos besoins */
+    top: 20px; 
+    right: 20px; 
 }
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Open Sans', sans-serif; /* Utilise Open Sans comme police par défaut */
+    background-image: url(retro.png);
+    background-size: 100% 100%; /* Pour conserver la taille de l'image */
+}
+
+.container {
+    text-align: center; /* Centre le contenu de la page */
+    margin-top: 50px; /* Ajoute un espace en haut */
+}
+
+h1 {
+    color: #fff;
+    text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #00eaff, 0 0 50px #00eaff, 0 0 60px #00eaff, 0 0 70px #00eaff;
+    animation: sparkle 8s ease-in-out infinite;
+    font-size: 2.5rem;
+    animation: neonEffect 5s infinite alternate ease-in-out;
+}
+
+@keyframes neonEffect {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+      text-shadow:
+        0 0 0.35vw #ff00fb, /* Réduit la dispersion de l'ombre */
+        0.05vw 0 0.65vw #c30bc0, /* Réduit la dispersion et l'intensité */
+        0.15vw 0 0.65vw #d4ff00, /* Ajustements similaires pour les autres ombres */
+        0 0 0vw #c30bc0,
+        0.05vw 0 0vw #c30bc0,
+        0.15vw 0 0vw #c30bc0,
+        0 0 0vw #c30bc0,
+        0.05vw 0 0vw #c30bc0, /* Couleur plus douce pour une ombre moins intense */
+        0.15vw 0 0vw #c30bc0;
+    }
+  
+    20%, 24%, 55% {
+      text-shadow: none;
+      
+    }
+  }
+
+#songTitle {
+    margin-top: 0; /* Supprime la marge supérieure du premier titre */
+}
+
+#lyricsTable, #songForm {
+    margin-bottom: 20px; /* Ajoute de l'espace en bas du tableau et du formulaire */
+}
+
+input[type="text"] {
+    padding: 8px; /* Augmente la taille de la zone de texte */
+}
+
+button[type="submit"] {
+    padding: 10px 20px; /* Ajuste les dimensions du bouton de soumission */
+    font-size: 1.2rem; /* Augmente légèrement la taille du texte du bouton */
+}
+
+#score, #attempts {
+    margin-bottom: 20px;
+    color: #ffffff; /* Ajoute de l'espace en bas des éléments Score et Essais restants */
+}
+
+#resultMessage {
+    margin-bottom: 20px;
+    color: #fff; /* Ajoute de l'espace en bas du message de résultat */
+}
+
+#countdown {
+    display: block; /* Affiche le compte à rebours sur une nouvelle ligne */
+    margin-bottom: 20px;
+    color: #fff; /* Ajoute de l'espace en bas du compte à rebours */
+}
+
+/* Styles pour le fond animé */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Place le fond animé en arrière-plan */
+}
+
+.header-button {
+    background-color: #b221cf;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Ajustement de la transition pour transform */
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    margin-left: 10px;
+    letter-spacing: 3px;
+  }
+
+  .header-button:hover {
+    transform: scale(1.1); /* Ajoute un effet de zoom au survol */
+}
+
+  .header-button a {
+    color: #fff;
+    text-decoration: none;
+  }
+  

@@ -1,14 +1,18 @@
 <html>
-<head><title>Petit Bac Answers</title></head>
+<head>
+    <title>Petit Bac Answers</title></head>
+    <link rel="stylesheet" href="./static/petitbacanswer.css">
 <body>
+    <div class="game-frame">
     <h1>Your Answers:</h1>
-    <form method="POST" action="/validate-answers">
-        <p>Artist: {{.Artist}} <br> Correct? <input type="radio" name="artistCorrect" value="true"> Yes <input type="radio" name="artistCorrect" value="false" checked> No</p>
-        <p>Album: {{.Album}} <br> Correct? <input type="radio" name="albumCorrect" value="true"> Yes <input type="radio" name="albumCorrect" value="false" checked> No</p>
-        <p>Music Group: {{.MusicGroup}} <br> Correct? <input type="radio" name="musicGroupCorrect" value="true"> Yes <input type="radio" name="musicGroupCorrect" value="false" checked> No</p>
-        <p>Instrument: {{.Instrument}} <br> Correct? <input type="radio" name="instrumentCorrect" value="true"> Yes <input type="radio" name="instrumentCorrect" value="false" checked> No</p>
-        <p>Featuring: {{.Featuring}} <br> Correct? <input type="radio" name="featuringCorrect" value="true"> Yes <input type="radio" name="featuringCorrect" value="false" checked> No</p>
-        <input type="submit" value="Submit Answers">
+    <form id="ResponseForm" method="POST" action="/validate-answers">
+        <p>Artist: {{.Artist}} <br> Correct ? <input type="radio" name="artistCorrect" value="true"> Yes <input type="radio" name="artistCorrect" value="false" checked> No</p>
+        <p>Album: {{.Album}} <br> Correct ? <input type="radio" name="albumCorrect" value="true"> Yes <input type="radio" name="albumCorrect" value="false" checked> No</p>
+        <p>Music Group: {{.MusicGroup}} <br> Correct ? <input type="radio" name="musicGroupCorrect" value="true"> Yes <input type="radio" name="musicGroupCorrect" value="false" checked> No</p>
+        <p>Instrument: {{.Instrument}} <br> Correct ? <input type="radio" name="instrumentCorrect" value="true"> Yes <input type="radio" name="instrumentCorrect" value="false" checked> No</p>
+        <p>Featuring: {{.Featuring}} <br> Correct ? <input type="radio" name="featuringCorrect" value="true"> Yes <input type="radio" name="featuringCorrect" value="false" checked> No</p>
+        <input class="header-button" type="submit" value="Submit Answers">
     </form>
+</div>
 </body>
 </html>

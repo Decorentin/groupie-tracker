@@ -26,7 +26,7 @@ func LoginHandler(db *sql.DB) http.HandlerFunc {
 			login := r.FormValue("pseudo")
 			password := r.FormValue("password")
 
-			// Hash the password with SHA-256 before comparing it
+			// Hashing the password with SHA-256 before comparison
 			hashedPassword := hashPassword(password)
 
 			loggedIn, err := user.LoginUser(db, login, hashedPassword)
@@ -63,14 +63,14 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 				return
 			}
 
-			// Check the complexity of the password
+			// Checking password complexity
 			passwordEntropy := passwordEntropy(password)
-			if passwordEntropy < 80 { // Change here to 80 bits
-				http.Error(w, "Password must have an entropy of at least 80", http.StatusBadRequest)
+			if passwordEntropy < 80 { // Changed here to 80 bits
+				http.Error(w, "Password must have at least 80 bits of entropy", http.StatusBadRequest)
 				return
 			}
 
-			// Hash the password with SHA-256 before saving it
+			// Hashing the password with SHA-256 before storing it
 			hashedPassword := hashPassword(password)
 
 			newUser := user.User{Pseudo: pseudo, Email: email, Password: hashedPassword}
@@ -88,7 +88,7 @@ func RegisterHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// Function to hash a password with the SHA-256 algorithm
+// Function to hash a password using SHA-256 algorithm
 func hashPassword(password string) string {
 	hash := sha256.New()
 	hash.Write([]byte(password))
@@ -96,7 +96,7 @@ func hashPassword(password string) string {
 	return hashedPassword
 }
 
-// Function to calculate the entropy of the password
+// Function to calculate password entropy
 func passwordEntropy(password string) int {
 	var (
 		entropy float64

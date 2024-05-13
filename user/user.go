@@ -5,14 +5,14 @@ import (
 	"fmt"
 )
 
-// User représente un utilisateur de la plateforme
+// User represents a platform user
 type User struct {
-	Pseudo string
+	Pseudo   string
 	Email    string
 	Password string
 }
 
-// RegisterUser permet d'inscrire un nouvel utilisateur
+// RegisterUser registers a new user
 func RegisterUser(db *sql.DB, user User) error {
 	var exists int
 	err := db.QueryRow("SELECT COUNT(*) FROM USER WHERE pseudo = ? OR email = ?", user.Pseudo, user.Email).Scan(&exists)
@@ -27,27 +27,27 @@ func RegisterUser(db *sql.DB, user User) error {
 	return err
 }
 
-// LoginUser permet à un utilisateur de se connecter
+// LoginUser allows a user to log in
 func LoginUser(db *sql.DB, login, password string) (bool, error) {
 	var dbPassword string
 	var err error
 
-	// Rechercher l'utilisateur en utilisant le pseudo
+	// Search for the user using the pseudo
 	err = db.QueryRow("SELECT password FROM USER WHERE pseudo = ?", login).Scan(&dbPassword)
 	if err != nil {
-		// Si l'utilisateur n'est pas trouvé en utilisant le pseudo, rechercher en utilisant l'adresse e-mail
+		// If the user is not found using the pseudo, search using the email address
 		err = db.QueryRow("SELECT password FROM USER WHERE email = ?", login).Scan(&dbPassword)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				return false, fmt.Errorf("utilisateur non trouvé")
+				return false, fmt.Errorf("user not found")
 			}
 			return false, err
 		}
 	}
 
-	// Vérifier le mot de passe
+	// Check the password
 	if dbPassword != password {
-		return false, fmt.Errorf("mot de passe incorrect")
+		return false, fmt.Errorf("incorrect password")
 	}
 
 	return true, nil

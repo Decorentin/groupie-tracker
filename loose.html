@@ -15,11 +15,9 @@
 
     <script>
         function restartGame() {
-            // Réinitialiser le score et les fautes avant de relancer le jeu
             localStorage.setItem('score', 0);
             localStorage.setItem('faults', 0);
-            // Rediriger l'utilisateur vers la page de jeu
-            window.location.href = "/blind-test"; // Assurez-vous que le nom du fichier est correct
+            window.location.href = "/blind-test";
         }
     </script>
 </body>

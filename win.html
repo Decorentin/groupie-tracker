@@ -17,14 +17,10 @@
 
         document.getElementById('score').innerText = score;
 
-        // Ajouter un écouteur d'événements au clic sur le bouton de retour
         document.getElementById('returnHome').addEventListener('click', function() {
-            // Réinitialiser le score à zéro
             localStorage.setItem('score', 0);
-            // Réinitialiser le compteur d'essais à zéro
             localStorage.setItem('wrongAttempts', 0);
-            // Rediriger l'utilisateur vers la page d'accueil
-            window.location.href = "/home"; // Mettez ici le chemin de votre page d'accueil
+            window.location.href = "/home"; 
         });
     </script>
 </body>

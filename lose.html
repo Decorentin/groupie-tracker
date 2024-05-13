@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Défaite !</title>
+    <link rel="stylesheet" href="./static/lose-blintest.css">
 </head>
 <body>
     <h1>Défaite !</h1>
     <p>Votre score est : <span id="score"></span></p>
-    <p>Vous avez épuisé tous vos essais. Essayez encore ?</p>
-    <button id="returnHome">Retour à la page d'accueil</button>
+    <p1>Vous avez épuisé tous vos essais. Essayez encore ?</p1>
+    <button class="header-button"id="returnHome">Retour à la page d'accueil</button>
 
     <script>
         var score = localStorage.getItem('score');

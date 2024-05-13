@@ -1,7 +1,7 @@
 <html>
 <head><title>Petit Bac Answers</title></head>
 <body>
-    <h1>Your Answers for Letter '{{.Letter}}':</h1>
+    <h1>Your Answers:</h1>
     <form method="POST" action="/validate-answers">
         <p>Artist: {{.Artist}} <br> Correct? <input type="radio" name="artistCorrect" value="true"> Yes <input type="radio" name="artistCorrect" value="false" checked> No</p>
         <p>Album: {{.Album}} <br> Correct? <input type="radio" name="albumCorrect" value="true"> Yes <input type="radio" name="albumCorrect" value="false" checked> No</p>

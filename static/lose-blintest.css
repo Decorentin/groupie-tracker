@@ -1,0 +1,96 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Open Sans', sans-serif; /* Utilise Open Sans comme police par défaut */
+    background-image: url(retro.png);
+    background-size: 100%; /* Pour conserver la taille de l'image */
+}
+
+h1 {
+    color: #fff;
+    text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #00eaff, 0 0 50px #00eaff, 0 0 60px #00eaff, 0 0 70px #00eaff;
+    font-size: 3rem;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: neonEffect 5s infinite alternate ease-in-out;
+}
+
+
+@keyframes neonEffect {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+      text-shadow:
+        0 0 0.35vw #ff00fb, /* Réduit la dispersion de l'ombre */
+        0.05vw 0 0.65vw #c30bc0, /* Réduit la dispersion et l'intensité */
+        0.15vw 0 0.65vw #d4ff00, /* Ajustements similaires pour les autres ombres */
+        0 0 0vw #c30bc0,
+        0.05vw 0 0vw #c30bc0,
+        0.15vw 0 0vw #c30bc0,
+        0 0 0vw #c30bc0,
+        0.05vw 0 0vw #c30bc0, /* Couleur plus douce pour une ombre moins intense */
+        0.15vw 0 0vw #c30bc0;
+    }
+  
+    20%, 24%, 55% {
+      text-shadow: none;
+      
+    }
+  }
+
+  .header-button {
+    background-color: #b221cf;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Combinez les deux transitions en une seule ligne */
+
+    position: fixed; /* Position fixe pour centrer */
+    top: 70%; /* À mi-chemin verticalement */
+    left: 50%; /* À mi-chemin horizontalement */
+    transform: translate(-50%, -50%); /* Déplacer de moitié de sa propre taille vers le haut et la gauche */
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    margin-left: 10px;
+    letter-spacing: 3px;
+}
+
+.header-button:hover {
+    transform: scale(1.1); /* Ajoute un effet de zoom au survol */
+}
+
+.header-button a {
+    color: #fff;
+    text-decoration: none;
+}
+
+
+  p {
+    color: #fff;
+    font-weight: bolder;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+}
+p1 {
+    color: #fff;
+    font-weight: bolder;
+    text-align: center;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+}
+
+

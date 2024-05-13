@@ -6,19 +6,28 @@ body, html {
     background-size: 100%; /* Pour conserver la taille de l'image */
 }
 
-#formContainer {
-    margin: 50px auto;
-    width: 80%;
-    max-width: 600px;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9); /* Couleur de fond semi-transparente */
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Ombre portée */
-}
-
-form#responseForm p {
+form#ResponseForm p {
     color: rgb(255, 255, 255);
     font-weight: bold; /* Changer la couleur du texte en bleu */
+}
+
+.game-frame {
+    width: 70%;
+    margin: auto; /* Pour centrer horizontalement */
+    position: fixed; /* Utilise une position fixe pour le centrage vertical */
+    top: 50%; /* Place l'élément à 50% de la hauteur de la fenêtre */
+    left: 50%; /* Place l'élément à 50% de la largeur de la fenêtre */
+    transform: translate(-50%, -50%); /* Déplace l'élément de moitié de sa propre largeur et hauteur */
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    backdrop-filter: blur(8px); /* Effet de fond flou */
+    background-color: rgba(255, 255, 255, 0.2); /* Couleur de fond semi-transparente */
+}
+
+
+.content {
+    margin-top: 20px;
 }
 
 
@@ -50,56 +59,7 @@ h1 {
     }
   }
 
-
-.game-frame {
-    width: 70%;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    backdrop-filter: blur(8px); /* Effet de fond flou */
-    background-color: rgba(255, 255, 255, 0.2); /* Couleur de fond semi-transparente */
-    backdrop-filter: blur(10px); /* Effet de flou */
-}
-
-
-/* Style pour le contenu à l'intérieur du cadre */
-.content {
-    margin-top: 20px;
-}
-
-/* Style pour les paragraphes */
-.game-frame p {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-/* Style pour les champs de saisie */
-.game-frame input[type="text"],
-.game-frame select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-}
-
-/* Style pour le bouton */
-.game-frame button {
-    padding: 10px 20px;
-    background-color: #b221cf;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-/* Style pour le bouton au survol */
-.game-frame button:hover {
-    background-color: #b221cf;
-}
-
-/* Style pour le bouton de soumission */
-.header-button {
+  .header-button {
     background-color: #b221cf;
     color: #fff;
     border: none;
@@ -127,7 +87,3 @@ h1 {
     color: #fff;
     text-decoration: none;
   }
-p {
-    color: #fff;
-    font-weight: bolder;
-}

@@ -1,0 +1,42 @@
+<html>
+<head>
+    <title>Petit Bac Game</title>
+    <script>
+        // Fonction qui démarre quand la page est chargée
+        window.onload = function() {
+            // Définir la durée du timer en secondes
+            var timeLeft = 30;
+
+            // Mise à jour du timer toutes les secondes
+            var timerId = setInterval(countdown, 1000);
+
+            function countdown() {
+                if (timeLeft == 0) {
+                    clearTimeout(timerId);
+                    doSubmit(); // Appeler la fonction de soumission du formulaire
+                } else {
+                    // Mise à jour visuelle du timer pour l'utilisateur
+                    document.getElementById('timer').innerHTML = timeLeft + ' seconds remaining';
+                    timeLeft--;
+                }
+            }
+
+            function doSubmit() {
+                document.getElementById('responseForm').submit(); // Soumettre le formulaire
+            }
+        }
+    </script>
+</head>
+<body>
+    <p id="timer">30 seconds remaining</p>
+    <p>Current Letter: {{.Letter}}</p> 
+    <form method="POST" id="responseForm">
+        <p>Artist: <input type="text" name="artist" /></p>
+        <p>Album: <input type="text" name="album" /></p>
+        <p>Music Group: <input type="text" name="musicGroup" /></p>
+        <p>Instrument: <input type="text" name="instrument" /></p>
+        <p>Featuring: <input type="text" name="featuring" /></p>
+        <input type="submit" value="Submit" />
+    </form>
+</body>
+</html>

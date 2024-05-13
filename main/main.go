@@ -77,7 +77,9 @@ func main() {
 
 	http.HandleFunc("/blind-test", blindtest.BlindTestHandler)
 
-	http.HandleFunc("/petit-bac", petitBac.PetitBacHandler())
+	http.HandleFunc("/petit-bac", petitBac.PetitBacHandler)
+	http.HandleFunc("/petit-bac-answers", petitBac.AnswersHandler)
+	http.HandleFunc("/validate-answers", petitBac.ValidateAnswersHandler)
 
 	http.ListenAndServe(":8080", nil)
 }

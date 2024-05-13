@@ -1,148 +1,126 @@
 package petitBac
 
 import (
-	"encoding/json"
+	"fmt"
+	"html/template"
 	"log"
 	"math/rand"
 	"net/http"
 	"time"
-
-	"github.com/gorilla/websocket"
 )
 
-type Client struct {
-	socket *websocket.Conn
-	send   chan []byte
+type GameResponse struct {
+	Letter     rune
+	Artist     string
+	Album      string
+	MusicGroup string
+	Instrument string
+	Featuring  string
 }
 
-type Game struct {
-	CurrentLetter rune
-	Categories    map[string]string
-}
+var responses []GameResponse
+var htmlContent []byte
+var letters []rune
+var originalLetters = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var templates *template.Template
 
-var (
-	clients    = make(map[*Client]bool)
-	broadcast  = make(chan []byte)
-	register   = make(chan *Client)
-	unregister = make(chan *Client)
-	upgrader   = websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-	}
-	currentGame *Game
-	categories  = []string{"Artiste", "Album", "Groupe de musique", "Instrument de musique", "Featuring"} // Définition des catégories
-)
-
-func PetitBacHandler() {
-	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", handleWebSocket)
-
-	initGame()
-	go handleMessages()
-
-	http.ListenAndServe(":8080", nil)
-}
-
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "index.html")
-}
-
-func handleWebSocket(w http.ResponseWriter, r *http.Request) {
-	ws, err := upgrader.Upgrade(w, r, nil)
+func init() {
+	var err error
+	// Charger les templates directement par leur nom si elles sont dans le même répertoire
+	templates, err = template.ParseFiles("petit-bac.html", "petit-bac-answers.html")
 	if err != nil {
-		log.Printf("WebSocket upgrade failed: %v", err)
-		return
+		log.Fatal("Error loading templates:", err)
 	}
-	client := &Client{socket: ws, send: make(chan []byte, 1024)}
-	register <- client
-
-	initMessage, _ := json.Marshal(map[string]interface{}{
-		"letter":     string(currentGame.CurrentLetter),
-		"categories": categories,
-	})
-	client.send <- initMessage
-
-	go client.write()
-	go client.read()
+	resetLetters()
 }
 
-func initGame() {
-	currentGame = &Game{
-		CurrentLetter: generateUniqueLetter(),
-		Categories:    make(map[string]string),
-	}
+// Fonction pour réinitialiser la liste des lettres
+func resetLetters() {
+	letters = make([]rune, len(originalLetters))
+	copy(letters, originalLetters)
 }
 
-func generateUniqueLetter() rune {
+// Fonction pour obtenir une lettre aléatoire
+func getRandomLetter() rune {
+	if len(letters) == 0 {
+		resetLetters()
+	}
+
 	rand.Seed(time.Now().UnixNano())
-	return rune(rand.Intn(26) + 'A')
+	index := rand.Intn(len(letters))
+	letter := letters[index]
+	letters = append(letters[:index], letters[index+1:]...)
+	return letter
 }
 
-func (c *Client) read() {
-	defer func() {
-		unregister <- c
-		c.socket.Close()
-	}()
-
-	for {
-		_, message, err := c.socket.ReadMessage()
-		if err != nil {
-			log.Printf("error: %v", err)
-			break
-		}
-		broadcast <- message
+// Supposons que vous ayez une méthode pour récupérer la lettre actuellement utilisée
+func getCurrentLetter() rune {
+	if len(letters) > 0 {
+		return letters[len(letters)-1]
 	}
+	return ' '
 }
 
-func (c *Client) write() {
-	defer c.socket.Close()
-	for message := range c.send {
-		err := c.socket.WriteMessage(websocket.TextMessage, message)
-		if err != nil {
-			log.Printf("error: %v", err)
-			break
+func PetitBacHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		newResponse := GameResponse{
+			Letter:     getCurrentLetter(),
+			Artist:     r.FormValue("artist"),
+			Album:      r.FormValue("album"),
+			MusicGroup: r.FormValue("musicGroup"),
+			Instrument: r.FormValue("instrument"),
+			Featuring:  r.FormValue("featuring"),
 		}
-	}
-}
-
-func handleMessages() {
-	for {
-		select {
-		case client := <-register:
-			clients[client] = true
-		case client := <-unregister:
-			if _, ok := clients[client]; ok {
-				delete(clients, client)
-				close(client.send)
-			}
-		case message := <-broadcast:
-			// Afficher le message dans les logs du serveur
-			log.Printf("Received message: %s", string(message))
-
-			// Traitement supplémentaire des données (ex : stockage ou analyse)
-			processData(message)
-
-			// Diffuser le message à tous les clients
-			for client := range clients {
-				select {
-				case client.send <- message:
-				default:
-					close(client.send)
-					delete(clients, client)
-				}
-			}
-		}
-	}
-}
-
-func processData(message []byte) {
-	// Deserialiser le message pour un traitement plus spécifique si nécessaire
-	var data map[string]interface{}
-	if err := json.Unmarshal(message, &data); err != nil {
-		log.Printf("Error unmarshalling message: %v", err)
+		responses = append(responses, newResponse)
+		http.Redirect(w, r, "/petit-bac-answers", http.StatusSeeOther)
 		return
 	}
 
-	// Traiter les données comme nécessaire
-	log.Printf("Processed data: %+v", data)
+	currentLetter := getRandomLetter()
+	if err := templates.ExecuteTemplate(w, "petit-bac.html", map[string]interface{}{"Letter": string(currentLetter)}); err != nil {
+		http.Error(w, "Error rendering template: "+err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func AnswersHandler(w http.ResponseWriter, r *http.Request) {
+	if len(responses) > 0 {
+		lastResponse := responses[len(responses)-1]
+		if err := templates.ExecuteTemplate(w, "petit-bac-answers.html", lastResponse); err != nil {
+			http.Error(w, "Error rendering template: "+err.Error(), http.StatusInternalServerError)
+		}
+	} else {
+		http.Error(w, "No answers to display", http.StatusNotFound)
+	}
+}
+
+func ValidateAnswersHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Redirect(w, r, "/petit-bac", http.StatusSeeOther)
+		return
+	}
+
+	score := 0
+	if r.FormValue("artistCorrect") == "true" {
+		score++
+	}
+	if r.FormValue("albumCorrect") == "true" {
+		score++
+	}
+	if r.FormValue("musicGroupCorrect") == "true" {
+		score++
+	}
+	if r.FormValue("instrumentCorrect") == "true" {
+		score++
+	}
+	if r.FormValue("featuringCorrect") == "true" {
+		score++
+	}
+
+	result := "Sorry, you did not score enough."
+	if score >= 3 {
+		result = "Congratulations, you win a point!"
+	}
+
+	// Modifier ici pour inclure un lien direct vers la page du jeu
+	fmt.Fprintf(w, `<html><body><p>%s</p><a href='/petit-bac'>Try again</a></body></html>`, result)
 }

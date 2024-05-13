@@ -83,18 +83,21 @@ button[type="submit"] {
 
 #score, #attempts {
     margin-bottom: 20px;
-    color: #ffffff; /* Ajoute de l'espace en bas des éléments Score et Essais restants */
+    color: #ffffff;
+    font-weight: bold; /* Ajoute de l'espace en bas des éléments Score et Essais restants */
 }
 
 #resultMessage {
     margin-bottom: 20px;
-    color: #fff; /* Ajoute de l'espace en bas du message de résultat */
+    color: #fff; 
+    font-weight: bold;/* Ajoute de l'espace en bas du message de résultat */
 }
 
 #countdown {
     display: block; /* Affiche le compte à rebours sur une nouvelle ligne */
     margin-bottom: 20px;
-    color: #fff; /* Ajoute de l'espace en bas du compte à rebours */
+    color: #fff; 
+    font-weight: bold;/* Ajoute de l'espace en bas du compte à rebours */
 }
 
 /* Styles pour le fond animé */

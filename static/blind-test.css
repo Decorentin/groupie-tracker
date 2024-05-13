@@ -1,37 +1,83 @@
-/* Styles pour le corps de la page */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    /* background: url(fond.jpg) no-repeat; */
-    background-size: cover;
-    background-position: center;
+body, html {
     margin: 0;
-    padding: 20px;
-    text-align: center;
+    padding: 0;
+    font-family: 'Open Sans', sans-serif; /* Utilise Open Sans comme police par défaut */
+    background-image: url(retro.png);
+    background-size: 100%; /* Pour conserver la taille de l'image */
 }
 
 /* Styles pour le conteneur principal */
 .player-wrapper {
-    background-color: #fff;
-    border: 2px solid #000;
-    border-radius: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
     padding: 20px;
-    margin: 0 auto;
-    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Ombre portée */
+    z-index: 100; /* Assure que l'élément est au-dessus de tout autre contenu */
+    background-color: rgba(255, 255, 255, 0.2); /* Couleur de fond semi-transparente */
+    backdrop-filter: blur(10px); /* Effet de flou */
 }
+
 
 /* Styles pour les titres */
 h2 {
-    color: #000;
-    font-size: 24px;
+    color: #fff;
+    text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #00eaff, 0 0 50px #00eaff, 0 0 60px #00eaff, 0 0 70px #00eaff;
+    animation: sparkle 8s ease-in-out infinite;
+    font-size: 3rem;
+    animation: neonEffect 5s infinite alternate ease-in-out;
 }
 
-h3 {
-    color: #666;
-    font-size: 20px;
-    margin-top: 20px;
+@keyframes neonEffect {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+      text-shadow:
+        0 0 0.35vw #ff00fb, /* Réduit la dispersion de l'ombre */
+        0.05vw 0 0.65vw #c30bc0, /* Réduit la dispersion et l'intensité */
+        0.15vw 0 0.65vw #d4ff00, /* Ajustements similaires pour les autres ombres */
+        0 0 0vw #c30bc0,
+        0.05vw 0 0vw #c30bc0,
+        0.15vw 0 0vw #c30bc0,
+        0 0 0vw #c30bc0,
+        0.05vw 0 0vw #c30bc0, /* Couleur plus douce pour une ombre moins intense */
+        0.15vw 0 0vw #c30bc0;
+    }
+  
+    20%, 24%, 55% {
+      text-shadow: none;
+      
+    }
+  }
+
+  h3 {
+    color: #fff;
+    text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #00eaff, 0 0 50px #00eaff, 0 0 60px #00eaff, 0 0 70px #00eaff;
+    animation: sparkle 8s ease-in-out infinite;
+    font-size: 1.5rem;
+    animation: neonEffect 5s infinite alternate ease-in-out;
 }
 
+@keyframes neonEffect {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+      text-shadow:
+        0 0 0.35vw #ff00fb, /* Réduit la dispersion de l'ombre */
+        0.05vw 0 0.65vw #c30bc0, /* Réduit la dispersion et l'intensité */
+        0.15vw 0 0.65vw #d4ff00, /* Ajustements similaires pour les autres ombres */
+        0 0 0vw #c30bc0,
+        0.05vw 0 0vw #c30bc0,
+        0.15vw 0 0vw #c30bc0,
+        0 0 0vw #c30bc0,
+        0.05vw 0 0vw #c30bc0, /* Couleur plus douce pour une ombre moins intense */
+        0.15vw 0 0vw #c30bc0;
+    }
+  
+    20%, 24%, 55% {
+      text-shadow: none;
+      
+    }
+  }
 /* Styles pour le formulaire */
 form {
     margin-top: 20px;
@@ -40,8 +86,10 @@ form {
 label {
     display: block;
     margin-bottom: 10px;
-    color: #000;
+    color: #ffffff;
     font-size: 18px;
+    font-weight: bold;
+    padding: 5px;
 }
 
 input[type="text"] {
@@ -76,4 +124,13 @@ button[type="submit"]:hover, button:hover {
 /* Styles pour le lecteur audio */
 #audioPlayer {
     display: none;
+}
+
+
+#countdown,
+#score,
+#faults {
+    color: white; /* Changer la couleur du texte en rouge */
+    font-weight: bold;
+    padding: 5px;
 }

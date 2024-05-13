@@ -265,25 +265,6 @@ img {
     filter: blur(20px);
 }
 
-@media screen and (max-width: 768px
-) {
-    h2 {
-        font-size: 2rem;
-    }
-
-    h1 {
-        font-size: 2.5rem;
-    }
-
-    p {
-        font-size: 1rem;
-    }
-
-    .flip-card {
-        width: 100%;
-        height: auto;
-    }
-}
 
 footer {
     background-color: #000000;

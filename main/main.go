@@ -5,22 +5,23 @@ import (
 	"log"
 	"net/http"
 
-	// Our packages
+	// Import custom packages
 	blindtest "test/blindTest"
 	"test/dbHandlers"
 	guessthesong "test/guessTheSong"
 
-	//SQLite driver
+	// Import SQLite driver
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// initDB initializes and returns a database connection
 func initDB() *sql.DB {
 	db, err := sql.Open("sqlite3", "./foo.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Create tables USER, ROOMS, ROOM_USERS, GAMES
+	// Create necessary tables: USER, ROOMS, ROOM_USERS, GAMES
 	_, err = db.Exec(`
 CREATE TABLE IF NOT EXISTS USER (
 	id INTEGER PRIMARY KEY,
@@ -58,12 +59,13 @@ CREATE TABLE IF NOT EXISTS GAMES (
 }
 
 func main() {
+	db := initDB() // Initialize the database
+	defer db.Close() // Ensure the database connection is closed on program termination
 
-	db := initDB()
-	defer db.Close()
-
+	// Set up static file handling
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
+	// Route HTTP requests to appropriate handlers
 	http.HandleFunc("/", dbHandlers.LoginHandler(db))
 	http.HandleFunc("/login", dbHandlers.LoginHandler(db))
 	http.HandleFunc("/register", dbHandlers.RegisterHandler(db))
@@ -76,10 +78,11 @@ func main() {
 
 	http.HandleFunc("/blind-test", blindtest.BlindTestHandler)
 
+	// Start the HTTP server on port 8080
 	http.ListenAndServe(":8080", nil)
 }
 
-// serveFile retourne un gestionnaire qui sert un fichier spécifique.
+// serveFile returns an HTTP handler that serves a specific file.
 func serveFile(filename string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filename)
